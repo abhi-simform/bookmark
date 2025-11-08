@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { BottomNav } from './components/mobile/BottomNav';
 import { FAB } from './components/mobile/FAB';
 import { BottomSheet } from './components/mobile/BottomSheet';
+import { InstallPrompt } from './components/InstallPrompt';
 import { useBottomSheet } from './hooks/useBottomSheet';
 import { useCollections } from './hooks/useCollections';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
@@ -133,6 +134,9 @@ function App() {
       >
         <AddBookmarkSheet onClose={addBookmarkSheet.close} />
       </BottomSheet>
+
+      {/* PWA Install Prompt */}
+      <InstallPrompt />
     </div>
   );
 }

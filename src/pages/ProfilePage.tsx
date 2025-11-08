@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Edit2, Download, Upload, LogOut, X, Check, RefreshCw, Cloud } from 'lucide-react';
+import { Edit2, Download, Upload, LogOut, X, Check, RefreshCw, Cloud, Smartphone } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useBookmarks } from '@/hooks/useBookmarks';
 import { useCollections } from '@/hooks/useCollections';
@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { BottomSheet } from '@/components/mobile/BottomSheet';
 import { useBottomSheet } from '@/hooks/useBottomSheet';
 import { syncService } from '@/lib/sync';
+import { useInstallPrompt } from '@/hooks/useInstallPrompt';
 
 export default function ProfilePage() {
   const { user, signOut } = useAuth();
@@ -14,6 +15,7 @@ export default function ProfilePage() {
   const { collections, addCollection } = useCollections();
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { isInstallable, isInstalled, promptInstall } = useInstallPrompt();
   
   const [userName, setUserName] = useState(user?.user_metadata?.name || '');
   const [editNameValue, setEditNameValue] = useState(userName);
@@ -190,6 +192,29 @@ export default function ProfilePage() {
             </span>
             {syncing && <RefreshCw className="w-4 h-4 text-primary animate-spin" />}
           </button>
+
+          {/* Install App Button */}
+          {isInstallable && !isInstalled && (
+            <button
+              onClick={promptInstall}
+              className="w-full flex items-center gap-3 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800 active:scale-[0.98] transition-transform"
+            >
+              <Smartphone className="w-5 h-5 text-green-600 dark:text-green-400" />
+              <span className="flex-1 text-left font-medium text-green-600 dark:text-green-400">
+                Install App
+              </span>
+            </button>
+          )}
+
+          {/* Already Installed Badge */}
+          {isInstalled && (
+            <div className="w-full flex items-center gap-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+              <Check className="w-5 h-5 text-green-600 dark:text-green-400" />
+              <span className="flex-1 text-left font-medium text-gray-600 dark:text-gray-400">
+                App Installed
+              </span>
+            </div>
+          )}
 
           <button
             onClick={handleImport}

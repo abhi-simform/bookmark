@@ -10,17 +10,19 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      injectRegister: 'auto',
+      manifestFilename: 'manifest.webmanifest',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
       manifest: {
         name: 'Bookmark Manager',
         short_name: 'Bookmarks',
-        description: 'Mobile-first bookmark management PWA',
+        description: 'Mobile-first bookmark management PWA with offline support',
         theme_color: '#6366f1',
         background_color: '#ffffff',
         display: 'standalone',
         orientation: 'portrait-primary',
-        scope: '/',
-        start_url: '/',
+        scope: process.env.NODE_ENV === 'production' ? '/bookmark/' : '/',
+        start_url: process.env.NODE_ENV === 'production' ? '/bookmark/' : '/',
         icons: [
           {
             src: 'pwa-64x64.png',
