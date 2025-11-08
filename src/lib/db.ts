@@ -180,5 +180,4 @@ export async function clearAllData(): Promise<void> {
     tx.objectStore('tags').clear(),
     tx.done,
   ]);
-  console.log('All local data cleared');
 }

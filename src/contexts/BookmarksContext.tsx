@@ -62,7 +62,6 @@ export function BookmarksProvider({ children }: { children: ReactNode }) {
   // Subscribe to sync completion events to reload data
   useEffect(() => {
     const unsubscribe = syncService.onSyncComplete(() => {
-      console.log('Sync completed, reloading bookmarks...');
       loadBookmarks();
     });
 
@@ -72,7 +71,6 @@ export function BookmarksProvider({ children }: { children: ReactNode }) {
   // Subscribe to thumbnail updates to update UI in real-time
   useEffect(() => {
     const unsubscribe = thumbnailService.onThumbnailUpdate((updatedBookmark) => {
-      console.log('Thumbnail updated, refreshing UI for:', updatedBookmark.title);
       setBookmarks((prev) => 
         prev.map((b) => (b.id === updatedBookmark.id ? updatedBookmark : b))
       );

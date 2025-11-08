@@ -221,13 +221,10 @@ export class SyncService {
             last_modified_at: new Date(bookmark.lastModifiedAt).toISOString(),
           };
           
-          console.log('Inserting bookmark data:', bookmarkData);
-          
           const { error: insertError } = await supabase.from('bookmarks').insert(bookmarkData);
           
           if (insertError) {
             console.error('Error inserting bookmark:', bookmark.id, insertError);
-            console.error('Bookmark data that failed:', bookmarkData);
             throw insertError;
           }
         }
@@ -300,15 +297,12 @@ export class SyncService {
   // Full sync: both directions
   async fullSync(userId: string): Promise<void> {
     if (this.syncStatus.isSyncing) {
-      console.log('Sync already in progress');
       return;
     }
 
     try {
       this.syncStatus.isSyncing = true;
       this.syncStatus.error = null;
-
-      console.log('Starting full sync...');
 
       // Sync collections first (bookmarks depend on them)
       await this.syncCollectionsFromCloud(userId);
@@ -319,7 +313,6 @@ export class SyncService {
       await this.syncBookmarksToCloud(userId);
 
       this.updateLastSync();
-      console.log('Full sync completed successfully');
       
       // Notify subscribers that sync completed
       this.notifySyncComplete();
@@ -335,8 +328,6 @@ export class SyncService {
   // Initial sync when user logs in (cloud -> local)
   // Ensure Miscellaneous collection exists for user
   async ensureMiscellaneousCollection(userId: string): Promise<void> {
-    console.log('[ensureMiscellaneous] Starting check for userId:', userId);
-    
     // Check if Miscellaneous collection exists in cloud
     const { data: cloudCollections, error: cloudError } = await supabase
       .from('collections')
@@ -344,8 +335,6 @@ export class SyncService {
       .eq('user_id', userId)
       .eq('name', 'Miscellaneous')
       .maybeSingle();
-
-    console.log('[ensureMiscellaneous] Cloud check result:', { cloudCollections, cloudError });
 
     if (!cloudCollections) {
       // Create Miscellaneous collection in cloud
@@ -366,17 +355,12 @@ export class SyncService {
 
       if (insertError) {
         console.error('[ensureMiscellaneous] Error creating in cloud:', insertError);
-      } else {
-        console.log('[ensureMiscellaneous] ✅ Created Miscellaneous collection in cloud with icon: folder');
       }
-    } else {
-      console.log('[ensureMiscellaneous] Miscellaneous already exists in cloud, icon:', cloudCollections.icon);
     }
 
     // Ensure it exists locally
     const localCollections = await db.getAllCollections();
     const hasMisc = localCollections.some(c => c.name === 'Miscellaneous');
-    console.log('[ensureMiscellaneous] Local check - has Miscellaneous:', hasMisc);
 
     if (!hasMisc) {
       const miscId = `misc_${userId}`;
@@ -392,18 +376,12 @@ export class SyncService {
         createdAt: now,
         lastModifiedAt: now,
       });
-
-      console.log('[ensureMiscellaneous] ✅ Created Miscellaneous collection locally with icon: folder');
-    } else {
-      const miscCollection = localCollections.find(c => c.name === 'Miscellaneous');
-      console.log('[ensureMiscellaneous] Miscellaneous already exists locally, icon:', miscCollection?.icon);
     }
   }
 
   async initialSync(userId: string): Promise<void> {
     try {
       this.syncStatus.isSyncing = true;
-      console.log('Starting initial sync from cloud...');
 
       // Ensure Miscellaneous collection exists first
       await this.ensureMiscellaneousCollection(userId);
@@ -417,7 +395,6 @@ export class SyncService {
       await this.syncBookmarksToCloud(userId);
 
       this.updateLastSync();
-      console.log('Initial sync completed');
       
       // Notify subscribers that sync completed
       this.notifySyncComplete();

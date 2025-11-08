@@ -35,37 +35,18 @@ class ThumbnailService {
    */
   async fetchMissingThumbnails(_userId: string): Promise<void> {
     if (this.isRunning) {
-      console.log('Thumbnail fetch already in progress');
       return;
     }
 
     this.isRunning = true;
-    console.log('Starting background thumbnail fetch...');
 
     try {
       // Get all bookmarks
       const bookmarks = await db.getAllBookmarks();
       
-      console.log(`Total bookmarks in DB: ${bookmarks.length}`);
-      
-      // Log sample of bookmarks for debugging
-      if (bookmarks.length > 0) {
-        const sample = bookmarks[0];
-        console.log('Sample bookmark:', {
-          title: sample.title,
-          url: sample.url,
-          hasThumbnail: !!sample.thumbnail,
-          hasFavicon: !!sample.favicon
-        });
-      }
-      
       // Filter bookmarks without thumbnails OR favicons
       const bookmarksNeedingThumbnails = bookmarks.filter(
         (bookmark: Bookmark) => !bookmark.thumbnail || !bookmark.favicon
-      );
-
-      console.log(
-        `Found ${bookmarksNeedingThumbnails.length} bookmarks needing thumbnails or favicons`
       );
 
       // Process bookmarks in batches to avoid overwhelming the API
@@ -82,8 +63,6 @@ class ThumbnailService {
           await this.delay(1000);
         }
       }
-
-      console.log('Background thumbnail fetch completed');
     } catch (error) {
       console.error('Error during thumbnail fetch:', error);
     } finally {
@@ -96,8 +75,6 @@ class ThumbnailService {
    */
   private async fetchAndUpdateThumbnail(bookmark: Bookmark): Promise<void> {
     try {
-      console.log(`Fetching thumbnail for: ${bookmark.title}`);
-      
       const metadata = await fetchMetadata(bookmark.url);
 
       // Only update if we got new thumbnail or favicon data
@@ -110,7 +87,6 @@ class ThumbnailService {
         };
 
         await db.updateBookmark(updatedBookmark);
-        console.log(`Updated thumbnail for: ${bookmark.title}`);
         
         // Notify subscribers about the update
         this.notifyThumbnailUpdate(updatedBookmark);

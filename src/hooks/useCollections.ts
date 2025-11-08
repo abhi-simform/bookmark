@@ -71,7 +71,6 @@ export function useCollections() {
   // Subscribe to sync completion events to reload data
   useEffect(() => {
     const unsubscribe = syncService.onSyncComplete(() => {
-      console.log('Sync completed, reloading collections...');
       loadCollections();
     });
 

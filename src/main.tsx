@@ -6,7 +6,6 @@ import { BookmarksProvider } from './contexts/BookmarksContext';
 import App from './App';
 import './index.css';
 import { initDB } from './lib/db';
-import './utils/cleanupDatabase';
 
 // Initialize database
 initDB().catch(console.error);

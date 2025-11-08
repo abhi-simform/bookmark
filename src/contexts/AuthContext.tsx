@@ -36,7 +36,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setTimeout(() => {
         supabase.auth.getUser().then(({ data }) => {
           if (data.user) {
-            console.log('Starting background thumbnail fetch after sync...');
             thumbnailService.fetchMissingThumbnails(data.user.id).catch((error) => {
               console.error('Background thumbnail fetch failed:', error);
             });
@@ -47,7 +46,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // Get initial session - NO automatic sync here
     supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log('[AuthContext] getSession called - NOT syncing');
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
@@ -57,27 +55,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('[AuthContext] Auth state change:', event, '| Already synced:', hasPerformedInitialSync);
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
       
       // ONLY sync when user signs in AND we haven't synced yet
       if (event === 'SIGNED_IN' && session?.user && !hasPerformedInitialSync) {
-        console.log('[AuthContext] SIGNED_IN event (first time) - syncing from cloud...');
         hasPerformedInitialSync = true;
         setSyncing(true);
         syncService.initialSync(session.user.id).catch((error) => {
           console.error('Sign in sync failed:', error);
           setSyncing(false);
         });
-      } else if (event === 'SIGNED_IN' && hasPerformedInitialSync) {
-        console.log('[AuthContext] SIGNED_IN event (already synced) - skipping sync');
       }
       
       // Clear local data on sign out
       if (event === 'SIGNED_OUT') {
-        console.log('User signed out, clearing local data');
         hasPerformedInitialSync = false; // Reset flag on logout
         await db.clearAllData();
       }
