@@ -12,10 +12,17 @@ export default defineConfig({
       registerType: 'autoUpdate',
       injectRegister: 'auto',
       manifestFilename: 'manifest.webmanifest',
-      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
+      includeAssets: [
+        'favicon.ico',
+        'favicon.svg', 
+        'favicon-96x96.png',
+        'apple-touch-icon.png',
+        'web-app-manifest-192x192.png',
+        'web-app-manifest-512x512.png'
+      ],
       manifest: {
         name: 'Bookmark Manager',
-        short_name: 'Bookmarks',
+        short_name: 'Bookmark',
         description: 'Mobile-first bookmark management PWA with offline support',
         theme_color: '#6366f1',
         background_color: '#ffffff',
@@ -25,26 +32,33 @@ export default defineConfig({
         start_url: process.env.NODE_ENV === 'production' ? '/bookmark/' : '/',
         icons: [
           {
-            src: 'pwa-64x64.png',
-            sizes: '64x64',
+            src: 'favicon-96x96.png',
+            sizes: '96x96',
             type: 'image/png'
           },
           {
-            src: 'pwa-192x192.png',
+            src: 'web-app-manifest-192x192.png',
             sizes: '192x192',
-            type: 'image/png'
+            type: 'image/png',
+            purpose: 'maskable'
           },
           {
-            src: 'pwa-512x512.png',
-            sizes: '512x512',
+            src: 'web-app-manifest-192x192.png',
+            sizes: '192x192',
             type: 'image/png',
             purpose: 'any'
           },
           {
-            src: 'maskable-icon-512x512.png',
+            src: 'web-app-manifest-512x512.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'maskable'
+          },
+          {
+            src: 'web-app-manifest-512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'any'
           }
         ]
       },
