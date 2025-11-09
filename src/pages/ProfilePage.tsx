@@ -153,22 +153,6 @@ export default function ProfilePage() {
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto pb-safe-bottom">
-        {/* PWA Debug Info - Remove this after testing */}
-        <div className="bg-yellow-50 dark:bg-yellow-900/20 border-b border-yellow-200 dark:border-yellow-800 p-4">
-          <p className="text-xs font-mono text-yellow-800 dark:text-yellow-200 mb-2">
-            <strong>PWA Install Debug Info:</strong>
-          </p>
-          <div className="space-y-1 text-xs font-mono text-yellow-700 dark:text-yellow-300">
-            <p>• Is Installable: {isInstallable ? '✓ Yes' : '✗ No'}</p>
-            <p>• Is Installed: {isInstalled ? '✓ Yes' : '✗ No'}</p>
-            <p>• Display Mode: {window.matchMedia('(display-mode: standalone)').matches ? 'Standalone' : 'Browser'}</p>
-            <p>• Service Worker: {navigator.serviceWorker ? '✓ Supported' : '✗ Not Supported'}</p>
-            <p className="mt-2 text-yellow-600 dark:text-yellow-400">
-              ℹ️ Check browser console for [InstallPrompt] logs
-            </p>
-          </div>
-        </div>
-
         {/* User info */}
         <div className="bg-white dark:bg-gray-900 p-6 border-b border-gray-200 dark:border-gray-800">
           <div className="flex items-center gap-4 mb-4">

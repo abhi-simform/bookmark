@@ -10,16 +10,6 @@ import { initDB } from './lib/db';
 // Initialize database
 initDB().catch(console.error);
 
-// Register service worker
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    const swPath = import.meta.env.MODE === 'production' ? '/bookmark/sw.js' : '/sw.js';
-    navigator.serviceWorker.register(swPath).catch((error) => {
-      console.error('Service Worker registration failed:', error);
-    });
-  });
-}
-
 // Set basename for GitHub Pages deployment
 const basename = import.meta.env.MODE === 'production' ? '/bookmark' : '/';
 

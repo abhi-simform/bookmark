@@ -16,28 +16,22 @@ export function InstallPrompt() {
       || (window.navigator as any).standalone 
       || document.referrer.includes('android-app://');
 
-    console.log('[InstallPrompt] Is already installed:', isInstalled);
-
     if (isInstalled) {
-      console.log('[InstallPrompt] App is already installed, not showing prompt');
       return;
     }
 
     // Show prompt after 2 seconds if not installed
     const showTimer = setTimeout(() => {
-      console.log('[InstallPrompt] Showing install prompt');
       setShowPrompt(true);
     }, 2000);
 
     // Listen for beforeinstallprompt event
     const handler = (e: Event) => {
-      console.log('[InstallPrompt] beforeinstallprompt event fired!');
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
     };
 
     window.addEventListener('beforeinstallprompt', handler);
-    console.log('[InstallPrompt] Listening for beforeinstallprompt event');
 
     return () => {
       window.removeEventListener('beforeinstallprompt', handler);
@@ -50,19 +44,9 @@ export function InstallPrompt() {
       return;
     }
 
-    // Show the install prompt
     await deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
     
-    // Wait for the user to respond to the prompt
-    const { outcome } = await deferredPrompt.userChoice;
-    
-    if (outcome === 'accepted') {
-      console.log('User accepted the install prompt');
-    } else {
-      console.log('User dismissed the install prompt');
-    }
-
-    // Clear the deferredPrompt so it can't be used again
     setDeferredPrompt(null);
     setShowPrompt(false);
   };
