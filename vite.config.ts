@@ -11,7 +11,7 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       injectRegister: 'auto',
-      manifestFilename: process.env.NODE_ENV === 'production' ? '/bookmark/manifest.webmanifest' : '/manifest.webmanifest',
+      manifestFilename: 'manifest.webmanifest',
       includeAssets: [
         'favicon.ico',
         'favicon.svg', 
