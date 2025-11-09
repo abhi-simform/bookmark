@@ -16,28 +16,46 @@ export function InstallPrompt() {
       || (window.navigator as any).standalone 
       || document.referrer.includes('android-app://');
 
+    console.log('[InstallPrompt] Is already installed:', isInstalled);
+
     if (isInstalled) {
+      console.log('[InstallPrompt] App is already installed, not showing prompt');
       return;
     }
 
     // Check if user has dismissed the prompt before
     const hasDismissed = localStorage.getItem('pwa-install-dismissed');
-    if (hasDismissed) {
+    const dismissedDate = hasDismissed ? new Date(hasDismissed) : null;
+    const isExpired = dismissedDate ? dismissedDate < new Date() : true;
+    
+    console.log('[InstallPrompt] Has dismissed before:', !!hasDismissed);
+    console.log('[InstallPrompt] Dismissal expired:', isExpired);
+
+    if (hasDismissed && !isExpired) {
+      console.log('[InstallPrompt] User dismissed recently, not showing prompt');
       return;
     }
 
+    // Clear expired dismissal
+    if (hasDismissed && isExpired) {
+      localStorage.removeItem('pwa-install-dismissed');
+    }
+
     const handler = (e: Event) => {
+      console.log('[InstallPrompt] beforeinstallprompt event fired!');
       // Prevent the mini-infobar from appearing on mobile
       e.preventDefault();
       // Save the event so it can be triggered later
       setDeferredPrompt(e as BeforeInstallPromptEvent);
       // Show our custom install prompt after a short delay
       setTimeout(() => {
+        console.log('[InstallPrompt] Showing install prompt');
         setShowPrompt(true);
       }, 2000); // Show after 2 seconds
     };
 
     window.addEventListener('beforeinstallprompt', handler);
+    console.log('[InstallPrompt] Listening for beforeinstallprompt event');
 
     return () => {
       window.removeEventListener('beforeinstallprompt', handler);
