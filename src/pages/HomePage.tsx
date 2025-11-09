@@ -14,7 +14,6 @@ export default function HomePage() {
     bookmarks,
     loading,
     toggleFavorite,
-    toggleArchive,
     deleteBookmark,
     refresh,
   } = useBookmarks();
@@ -26,7 +25,7 @@ export default function HomePage() {
 
   const filteredBookmarks = bookmarks.filter((bookmark) => {
     if (filter === 'favorite') return bookmark.isFavorite;
-    return !bookmark.isArchived; // Default: show all non-archived
+    return true; // Show all bookmarks
   });
 
   const handleRefresh = async () => {
@@ -85,7 +84,6 @@ export default function HomePage() {
           <BookmarkGrid
             bookmarks={filteredBookmarks}
             onToggleFavorite={toggleFavorite}
-            onToggleArchive={toggleArchive}
             onDelete={deleteBookmark}
             onEdit={handleEdit}
             onMove={handleMove}

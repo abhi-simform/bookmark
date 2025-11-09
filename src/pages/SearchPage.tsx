@@ -10,7 +10,7 @@ import type { Bookmark } from '@/types';
 
 export default function SearchPage() {
   const [query, setQuery] = useState('');
-  const { bookmarks, toggleFavorite, toggleArchive, deleteBookmark } = useBookmarks();
+  const { bookmarks, toggleFavorite, deleteBookmark } = useBookmarks();
   const editSheet = useBottomSheet();
   const moveSheet = useBottomSheet();
   const [selectedBookmark, setSelectedBookmark] = useState<Bookmark | null>(null);
@@ -36,8 +36,6 @@ export default function SearchPage() {
     const searchTerm = query.toLowerCase().trim();
     
     return bookmarks.filter((bookmark) => {
-      if (bookmark.isArchived) return false;
-      
       const titleMatch = bookmark.title.toLowerCase().includes(searchTerm);
       const descriptionMatch = bookmark.description?.toLowerCase().includes(searchTerm);
       const urlMatch = bookmark.url.toLowerCase().includes(searchTerm);
@@ -95,7 +93,6 @@ export default function SearchPage() {
               onEdit={handleEdit}
               onMove={handleMove}
               onToggleFavorite={toggleFavorite}
-              onToggleArchive={toggleArchive}
               onDelete={deleteBookmark}
             />
           </div>

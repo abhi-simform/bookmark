@@ -4,7 +4,6 @@ import { BookmarkCard } from './BookmarkCard';
 interface BookmarkGridProps {
   bookmarks: Bookmark[];
   onToggleFavorite: (id: string) => void;
-  onToggleArchive: (id: string) => void;
   onDelete: (id: string) => void;
   onEdit?: (bookmark: Bookmark) => void;
   onMove?: (bookmark: Bookmark) => void;
@@ -15,7 +14,6 @@ interface BookmarkGridProps {
 export function BookmarkGrid({
   bookmarks,
   onToggleFavorite,
-  onToggleArchive,
   onDelete,
   onEdit,
   onMove,
@@ -55,7 +53,6 @@ export function BookmarkGrid({
           key={bookmark.id}
           bookmark={bookmark}
           onToggleFavorite={onToggleFavorite}
-          onToggleArchive={onToggleArchive}
           onDelete={onDelete}
           onEdit={onEdit}
           onMove={onMove}

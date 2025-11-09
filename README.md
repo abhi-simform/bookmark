@@ -1,8 +1,10 @@
-# Bookmark Manager PWA
+# 📚 Bookmark Manager PWA
 
 A mobile-first Progressive Web App for managing bookmarks with offline support and cloud sync, built with React, TypeScript, Tailwind CSS, and Supabase.
 
 🔗 **Live Demo:** [https://abhi-simform.github.io/bookmark/](https://abhi-simform.github.io/bookmark/)
+
+> A complete, production-ready bookmark manager with offline-first architecture, cloud synchronization, and installable PWA capabilities.
 
 ## 🚀 Features
 
@@ -12,7 +14,6 @@ A mobile-first Progressive Web App for managing bookmarks with offline support a
 - ✅ **Cloud Sync** - Automatic bidirectional sync with Supabase
 - ✅ **Offline-First** - Works completely offline with IndexedDB storage
 - ✅ **Authentication** - Secure user authentication with Supabase Auth
-- ✅ **User Approval System** - Admin dashboard to approve new users
 - ✅ **Collections** - Organize bookmarks into folders with full CRUD operations
 - ✅ **Smart Install Prompts** - Browser and device-specific installation instructions
 - ✅ **Auto Metadata Fetching** - Automatically fetch title, description, and thumbnails from URLs
@@ -33,8 +34,6 @@ A mobile-first Progressive Web App for managing bookmarks with offline support a
 
 ### Touch Interactions
 - **Long Press** - Select multiple bookmarks
-- **Swipe Left** - Archive bookmark
-- **Swipe Right** - Add to favorites
 - **Pull-to-Refresh** - Refresh bookmark list
 - **Haptic Feedback** - Vibration feedback on interactions
 
@@ -71,148 +70,308 @@ A mobile-first Progressive Web App for managing bookmarks with offline support a
 - **Auto-update Service Worker** - Seamless app updates
 - **Background Sync** - Automatic cloud synchronization
 
-## 📦 Setup & Installation
+## 📦 Complete Setup Guide
+
+This guide will walk you through setting up your own instance of the Bookmark Manager PWA from scratch.
 
 ### Prerequisites
-- Node.js 18+ and npm
-- A Supabase account (free tier available)
 
-### Local Development Setup
+- **Node.js 18+** and npm installed
+- **Git** installed
+- A **Supabase account** (free tier available at [supabase.com](https://supabase.com))
+- A **GitHub account** (for deployment)
 
-1. **Clone the repository**
+---
+
+## 🚀 Step-by-Step Setup
+
+### Step 1: Clone the Repository
+
 ```bash
 git clone https://github.com/abhi-simform/bookmark.git
 cd bookmark
 ```
 
-2. **Install dependencies**
+### Step 2: Install Dependencies
+
 ```bash
 npm install
 ```
 
-3. **Configure Supabase**
-   - Create a new project at [supabase.com](https://supabase.com)
-   - Go to Project Settings > API
-   - Copy your project URL and anon key
-   - Create a `.env` file in the root directory:
-```env
-VITE_SUPABASE_URL=your_supabase_project_url
-VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+This will install all required packages including React, TypeScript, Vite, Tailwind CSS, Supabase client, and PWA tools.
+
+---
+
+### Step 3: Create Supabase Project
+
+1. Go to [supabase.com](https://supabase.com) and sign in
+2. Click **"New Project"**
+3. Fill in:
+   - **Name**: `bookmark-manager` (or any name you prefer)
+   - **Database Password**: Create a strong password (save this!)
+   - **Region**: Choose the closest to your location
+   - **Pricing Plan**: Free tier is sufficient
+4. Click **"Create new project"** and wait 2-3 minutes for setup
+
+---
+
+### Step 4: Set Up Database Schema
+
+1. In your Supabase project, go to **SQL Editor** (left sidebar)
+2. Click **"New Query"**
+3. Copy and paste the contents of `supabase/migrations/001_initial_schema.sql`
+4. Click **"Run"** or press `Ctrl/Cmd + Enter`
+5. You should see "Success. No rows returned" message
+
+**What this does:**
+- Creates `bookmarks` and `collections` tables
+- Sets up Row Level Security (RLS) policies
+- Creates indexes for performance
+- Adds a trigger to create default collection for new users
+
+---
+
+### Step 5: Configure Environment Variables
+
+1. In Supabase, go to **Project Settings** → **API**
+2. Copy these values:
+   - **Project URL** (under "Project URL")
+   - **anon public** key (under "Project API keys")
+
+3. Create a `.env` file in the project root:
+
+```bash
+# In the bookmark directory
+touch .env
 ```
 
-4. **Set up the database**
-   - Go to Supabase SQL Editor
-   - Run the following SQL to create tables:
+4. Add your Supabase credentials to `.env`:
+
+```env
+VITE_SUPABASE_URL=https://your-project-id.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key-here
+```
+
+⚠️ **Important**: Never commit the `.env` file to Git (it's already in `.gitignore`)
+
+---
+
+### Step 6: Test Locally
+
+1. Start the development server:
+
+```bash
+npm run dev
+```
+
+2. Open your browser to `http://localhost:5173`
+
+3. **Test the application:**
+   - Click **"Sign Up"** and create an account
+   - Add some test bookmarks
+   - Create collections
+   - Test the search functionality
+   - Verify data syncs to Supabase (check in Supabase Dashboard → Table Editor)
+
+---
+
+### Step 7: Deploy to GitHub Pages
+
+#### 7.1 Update Configuration for Your Repository
+
+1. Open `vite.config.ts`
+2. Update the `base` path to match your repository name:
+
+```typescript
+export default defineConfig({
+  base: '/your-repo-name/', // Change this to your GitHub repo name
+  // ... rest of config
+})
+```
+
+3. Open `src/main.tsx`
+4. Update the `basename`:
+
+```typescript
+<BrowserRouter basename="/your-repo-name">
+```
+
+**Example:** If your repo is `https://github.com/username/my-bookmarks`, use:
+- `base: '/my-bookmarks/'`
+- `basename="/my-bookmarks"`
+
+#### 7.2 Create GitHub Repository
+
+1. Go to [github.com](https://github.com) and create a new repository
+2. Name it (e.g., `bookmark-manager`)
+3. Keep it **public** (required for free GitHub Pages)
+4. **Don't** initialize with README (you already have one)
+
+#### 7.3 Push Your Code
+
+```bash
+# Initialize git (if not already done)
+git init
+
+# Add GitHub remote (replace with your repo URL)
+git remote add origin https://github.com/your-username/your-repo-name.git
+
+# Add and commit files
+git add .
+git commit -m "Initial commit: Bookmark Manager PWA"
+
+# Push to GitHub
+git branch -M main
+git push -u origin main
+```
+
+#### 7.4 Deploy to GitHub Pages
+
+```bash
+npm run deploy
+```
+
+This command will:
+- Build the production version
+- Create a `gh-pages` branch
+- Deploy your app to GitHub Pages
+
+#### 7.5 Enable GitHub Pages
+
+1. Go to your repository on GitHub
+2. Click **Settings** → **Pages**
+3. Under "Source", select:
+   - **Branch**: `gh-pages`
+   - **Folder**: `/ (root)`
+4. Click **Save**
+
+Wait 2-3 minutes, then your app will be live at:
+`https://your-username.github.io/your-repo-name/`
+
+---
+
+### Step 8: Configure Supabase for Production
+
+1. In Supabase, go to **Authentication** → **URL Configuration**
+2. Add your GitHub Pages URL to **Site URL**:
+   ```
+   https://your-username.github.io/your-repo-name/
+   ```
+3. Add the same URL to **Redirect URLs**
+
+---
+
+## 🔄 Updating Your Deployment
+
+When you make changes and want to deploy:
+
+```bash
+# Make your changes
+git add .
+git commit -m "Description of changes"
+git push origin main
+
+# Deploy to GitHub Pages
+npm run deploy
+```
+
+---
+
+## 🗄️ Database Schema
+
+The app uses two main tables:
+
+### **bookmarks** table
 ```sql
--- Create bookmarks table
 CREATE TABLE bookmarks (
   id TEXT PRIMARY KEY,
-  user_id UUID REFERENCES auth.users NOT NULL,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
   url TEXT NOT NULL,
   title TEXT NOT NULL,
   description TEXT,
   favicon TEXT,
-  collection_id TEXT,
+  collection_id TEXT REFERENCES collections(id) ON DELETE SET NULL,
   tags TEXT[] DEFAULT '{}',
   is_favorite BOOLEAN DEFAULT false,
-  is_archived BOOLEAN DEFAULT false,
   type TEXT DEFAULT 'link',
   platform TEXT DEFAULT 'web',
   created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW()
+  last_modified_at TIMESTAMPTZ DEFAULT NOW()
 );
+```
 
--- Create collections table
+**Columns:**
+- `id` - Unique bookmark identifier
+- `user_id` - Links to authenticated user (auto-deleted when user deleted)
+- `url` - The bookmark URL
+- `title` - Display title
+- `description` - Optional description
+- `favicon` - Site favicon URL
+- `collection_id` - Which collection this belongs to
+- `tags` - Array of tags (unused currently)
+- `is_favorite` - Star/favorite flag
+- `type` - Bookmark type (article, video, social, webpage)
+- `platform` - Platform detected (youtube, twitter, github, etc.)
+- `created_at` - Creation timestamp
+- `last_modified_at` - Last update timestamp
+
+### **collections** table
+
+```sql
 CREATE TABLE collections (
   id TEXT PRIMARY KEY,
-  user_id UUID REFERENCES auth.users NOT NULL,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
+  description TEXT,
   icon TEXT DEFAULT 'folder',
   color TEXT DEFAULT '#6366f1',
+  "order" INTEGER DEFAULT 0,
   created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW()
+  last_modified_at TIMESTAMPTZ DEFAULT NOW()
 );
-
--- Create user_profiles table
-CREATE TABLE user_profiles (
-  id UUID PRIMARY KEY REFERENCES auth.users,
-  email TEXT,
-  is_approved BOOLEAN DEFAULT false,
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Create admins table
-CREATE TABLE admins (
-  user_id UUID PRIMARY KEY REFERENCES auth.users,
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Enable Row Level Security
-ALTER TABLE bookmarks ENABLE ROW LEVEL SECURITY;
-ALTER TABLE collections ENABLE ROW LEVEL SECURITY;
-ALTER TABLE user_profiles ENABLE ROW LEVEL SECURITY;
-ALTER TABLE admins ENABLE ROW LEVEL SECURITY;
-
--- RLS Policies for bookmarks
-CREATE POLICY "Users can view own bookmarks" ON bookmarks FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY "Users can insert own bookmarks" ON bookmarks FOR INSERT WITH CHECK (auth.uid() = user_id);
-CREATE POLICY "Users can update own bookmarks" ON bookmarks FOR UPDATE USING (auth.uid() = user_id);
-CREATE POLICY "Users can delete own bookmarks" ON bookmarks FOR DELETE USING (auth.uid() = user_id);
-
--- RLS Policies for collections
-CREATE POLICY "Users can view own collections" ON collections FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY "Users can insert own collections" ON collections FOR INSERT WITH CHECK (auth.uid() = user_id);
-CREATE POLICY "Users can update own collections" ON collections FOR UPDATE USING (auth.uid() = user_id);
-CREATE POLICY "Users can delete own collections" ON collections FOR DELETE USING (auth.uid() = user_id);
-
--- RLS Policies for user_profiles
-CREATE POLICY "Users can view own profile" ON user_profiles FOR SELECT USING (auth.uid() = id);
-CREATE POLICY "Admins can view all profiles" ON user_profiles FOR SELECT USING (
-  EXISTS (SELECT 1 FROM admins WHERE user_id = auth.uid())
-);
-CREATE POLICY "Admins can update all profiles" ON user_profiles FOR UPDATE USING (
-  EXISTS (SELECT 1 FROM admins WHERE user_id = auth.uid())
-);
-
--- Create function to automatically create user profile
-CREATE OR REPLACE FUNCTION handle_new_user()
-RETURNS TRIGGER AS $$
-BEGIN
-  INSERT INTO user_profiles (id, email, is_approved)
-  VALUES (NEW.id, NEW.email, false);
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
-
--- Create trigger
-CREATE TRIGGER on_auth_user_created
-  AFTER INSERT ON auth.users
-  FOR EACH ROW EXECUTE FUNCTION handle_new_user();
 ```
 
-5. **Make yourself an admin (optional)**
-   - Sign up for an account in the app
-   - In Supabase SQL Editor, run:
-```sql
-INSERT INTO admins (user_id) VALUES ('your-user-id-here');
-UPDATE user_profiles SET is_approved = true WHERE id = 'your-user-id-here';
-```
+**Columns:**
+- `id` - Unique collection identifier
+- `user_id` - Links to authenticated user
+- `name` - Collection name
+- `description` - Optional description
+- `icon` - Icon name (from Lucide icons)
+- `color` - Hex color code
+- `order` - Display order
+- `created_at` - Creation timestamp
+- `last_modified_at` - Last update timestamp
 
-6. **Start the development server**
+### **Row Level Security (RLS)**
+
+Every table has RLS enabled with policies that ensure:
+- Users can only see their own data
+- Users can only modify their own data
+- Data is automatically isolated by user ID
+
+See `supabase/migrations/001_initial_schema.sql` for complete schema with all indexes and triggers.
+
+---
+
+## 📱 Available Scripts
+
 ```bash
-npm run dev
-```
-Visit `http://localhost:5173/`
+# Development
+npm run dev          # Start dev server at http://localhost:5173
 
-7. **Build for production**
-```bash
-npm run build
+# Build
+npm run build        # Build for production
+npm run preview      # Preview production build locally
+
+# Deployment
+npm run deploy       # Build and deploy to GitHub Pages
+
+# Code Quality
+npm run lint         # Run ESLint
+npm run type-check   # Run TypeScript type checking
 ```
 
-8. **Deploy to GitHub Pages**
-```bash
-npm run deploy
-```
+---
 
 ## 🌐 PWA Installation
 
@@ -311,8 +470,7 @@ src/
 │   ├── HomePage.tsx    # Main bookmarks view
 │   ├── CollectionsPage.tsx # Collections overview
 │   ├── ProfilePage.tsx # User profile and settings
-│   ├── SignInPage.tsx  # Authentication
-│   └── AdminPage.tsx   # User approval dashboard
+│   └── SignInPage.tsx  # Authentication
 ├── types/              # TypeScript type definitions
 └── main.tsx           # App entry point
 ```
@@ -323,7 +481,7 @@ src/
 - `src/lib/db.ts` - IndexedDB database wrapper for offline storage
 - `src/lib/sync.ts` - Bidirectional sync between IndexedDB and Supabase
 - `src/lib/supabase.ts` - Supabase client and type definitions
-- `src/contexts/AuthContext.tsx` - Authentication and user approval logic
+- `src/contexts/AuthContext.tsx` - Authentication and session management
 - `public/manifest.webmanifest` - PWA manifest (auto-generated by vite-plugin-pwa)
 
 ## ✨ Key Features Explained
@@ -341,12 +499,6 @@ src/
 - **Incremental Updates** only syncs changed data
 - **Manual Sync Button** in profile page for force sync
 
-### User Approval System
-- **New User Registration** creates unapproved accounts
-- **Admin Dashboard** at `/admin` to approve/revoke users
-- **Pending Approval Screen** shows waiting message to unapproved users
-- **Row Level Security** ensures users only see their own data
-
 ### Smart PWA Installation
 - **Auto-Detection** identifies user's device and browser
 - **Custom Instructions** shows platform-specific installation steps
@@ -363,12 +515,11 @@ src/
 
 ### Completed ✅
 - [x] Supabase cloud sync with offline-first architecture
-- [x] Email authentication with user approval system
+- [x] Email authentication with Supabase Auth
 - [x] Export bookmarks (JSON format)
 - [x] Import bookmarks from JSON backup
 - [x] PWA installation with smart prompts
 - [x] Background thumbnail fetching
-- [x] Admin dashboard for user management
 - [x] GitHub Pages deployment
 
 ### Planned 🎯
@@ -383,36 +534,94 @@ src/
 - [ ] Analytics dashboard (most visited, tags analysis)
 - [ ] Custom themes and color schemes
 
-## 🚀 Deployment
+## � Troubleshooting
 
-### GitHub Pages
-The app is configured for GitHub Pages deployment:
+### Issue: "Failed to fetch metadata"
+**Solution:** The metadata API might be rate-limited. The app will still work; just manually enter the title and description.
 
-1. Update `base` path in `vite.config.ts` if needed (currently set to `/bookmark/`)
-2. Update `basename` in `src/main.tsx` to match
-3. Run deployment:
+### Issue: Bookmarks not syncing
+**Solution:**
+1. Check your internet connection
+2. Verify Supabase credentials in `.env`
+3. Check Supabase dashboard → Authentication → Users to confirm you're signed in
+4. Try manual sync from Profile page
+
+### Issue: "Service worker registration failed"
+**Solution:**
+- Service workers only work on `localhost` or `https://` domains
+- On GitHub Pages, this should work automatically
+- Clear browser cache and reload
+
+### Issue: PWA install prompt not showing
+**Solution:**
+- Install prompt only shows on HTTPS (or localhost)
+- Chrome requires the app to be visited multiple times
+- iOS Safari requires manual installation (no automatic prompt)
+- Use the manual "Install App" button in Profile page
+
+### Issue: Database types out of sync
+**Solution:** Regenerate database types:
 ```bash
-npm run deploy
+npx supabase gen types typescript --project-id YOUR_PROJECT_ID > src/lib/database.types.ts
 ```
 
-This will build and deploy to `gh-pages` branch automatically.
+### Issue: GitHub Pages shows 404
+**Solution:**
+1. Verify `base` in `vite.config.ts` matches your repo name
+2. Verify `basename` in `src/main.tsx` matches
+3. Ensure GitHub Pages is enabled for `gh-pages` branch
+4. Wait 2-3 minutes for GitHub Pages to deploy
 
-### Custom Domain
-To deploy to a custom domain:
-1. Remove or update the `base` path in `vite.config.ts`
-2. Update `basename` in `src/main.tsx`
-3. Build and deploy to your hosting provider
+### Issue: "Auth session missing" on production
+**Solution:**
+1. Add your GitHub Pages URL to Supabase → Authentication → URL Configuration
+2. Add to both "Site URL" and "Redirect URLs"
+3. Format: `https://username.github.io/repo-name/`
 
-### Environment Variables
-Required environment variables for deployment:
-- `VITE_SUPABASE_URL` - Your Supabase project URL
-- `VITE_SUPABASE_ANON_KEY` - Your Supabase anonymous key
+---
+
+## 🏗️ Project Structure
+
+```
+bookmark/
+├── public/                 # Static assets
+│   ├── icons/             # PWA icons
+│   └── manifest.webmanifest # PWA manifest (auto-generated)
+├── src/
+│   ├── components/
+│   │   ├── auth/          # Authentication components
+│   │   ├── bookmarks/     # Bookmark CRUD components
+│   │   ├── collections/   # Collection management
+│   │   └── mobile/        # Mobile-specific UI (FAB, BottomSheet, etc.)
+│   ├── contexts/
+│   │   ├── AuthContext.tsx        # Authentication state
+│   │   └── BookmarksContext.tsx   # Bookmarks state
+│   ├── hooks/             # Custom React hooks
+│   ├── lib/
+│   │   ├── db.ts          # IndexedDB wrapper
+│   │   ├── supabase.ts    # Supabase client
+│   │   ├── sync.ts        # Cloud sync logic
+│   │   ├── metadata.ts    # URL metadata fetching
+│   │   └── thumbnailService.ts # Background thumbnail fetcher
+│   ├── pages/             # Page components
+│   ├── types/             # TypeScript type definitions
+│   ├── App.tsx            # Main app component
+│   └── main.tsx           # App entry point
+├── supabase/
+│   └── migrations/        # Database migration files
+├── .env                   # Environment variables (create this)
+├── vite.config.ts         # Vite configuration
+├── tailwind.config.js     # Tailwind CSS configuration
+└── package.json           # Dependencies and scripts
+```
+
+---
 
 ## 🔒 Security
 
 - **Row Level Security (RLS)** enabled on all Supabase tables
 - **User-specific data** - users can only access their own bookmarks and collections
-- **Admin-only access** - user approval system restricts new registrations
+- **Authentication** - secure email/password authentication with Supabase Auth
 - **Secure authentication** - handled by Supabase Auth
 - **Environment variables** - sensitive keys stored in environment variables
 

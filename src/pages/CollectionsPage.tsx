@@ -43,7 +43,7 @@ export default function CollectionsPage() {
 
   // Count bookmarks per collection
   const getBookmarkCount = (collectionId: string) => {
-    return bookmarks.filter(b => b.collectionId === collectionId && !b.isArchived).length;
+    return bookmarks.filter(b => b.collectionId === collectionId).length;
   };
 
   const handleCollectionClick = (collectionId: string) => {

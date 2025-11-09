@@ -122,7 +122,6 @@ export default function AddBookmarkSheet({ onClose }: AddBookmarkSheetProps) {
         collectionId: collectionId,
         tags: [],
         isFavorite: false,
-        isArchived: false,
       });
 
       hapticFeedback.success();

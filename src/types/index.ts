@@ -21,7 +21,6 @@ export interface Bookmark {
   tags: string[];
   collectionId?: string;
   isFavorite: boolean;
-  isArchived: boolean;
   createdAt: number;
   lastModifiedAt: number;
 }
@@ -65,7 +64,6 @@ export interface SearchFilters {
   tags?: string[];
   collectionId?: string;
   isFavorite?: boolean;
-  isArchived?: boolean;
   dateFrom?: number;
   dateTo?: number;
 }

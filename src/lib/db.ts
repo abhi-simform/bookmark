@@ -8,7 +8,6 @@ interface BookmarkDB extends DBSchema {
     indexes: {
       'by-collection': string;
       'by-favorite': number;
-      'by-archived': number;
       'by-created': number;
     };
   };
@@ -39,7 +38,6 @@ export async function initDB(): Promise<IDBPDatabase<BookmarkDB>> {
       });
       bookmarkStore.createIndex('by-collection', 'collectionId');
       bookmarkStore.createIndex('by-favorite', 'isFavorite');
-      bookmarkStore.createIndex('by-archived', 'isArchived');
       bookmarkStore.createIndex('by-created', 'createdAt');
 
       // Collections store
@@ -101,11 +99,6 @@ export async function getBookmarksByCollection(collectionId: string): Promise<Bo
 export async function getFavoriteBookmarks(): Promise<Bookmark[]> {
   const db = await getDB();
   return db.getAllFromIndex('bookmarks', 'by-favorite', 1);
-}
-
-export async function getArchivedBookmarks(): Promise<Bookmark[]> {
-  const db = await getDB();
-  return db.getAllFromIndex('bookmarks', 'by-archived', 1);
 }
 
 // Collection operations

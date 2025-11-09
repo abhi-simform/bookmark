@@ -14,7 +14,6 @@ interface BookmarksContextType {
   updateBookmark: (id: string, updates: Partial<Bookmark>) => Promise<Bookmark>;
   deleteBookmark: (id: string) => Promise<void>;
   toggleFavorite: (id: string) => Promise<void>;
-  toggleArchive: (id: string) => Promise<void>;
   batchDelete: (ids: string[]) => Promise<void>;
   filterBookmarks: (filters: SearchFilters) => Bookmark[];
   sortBookmarks: (sortBy: SortBy, order: SortOrder) => Bookmark[];
@@ -181,13 +180,6 @@ export function BookmarksProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const toggleArchive = async (id: string) => {
-    const bookmark = bookmarks.find((b) => b.id === id);
-    if (bookmark) {
-      await updateBookmark(id, { isArchived: !bookmark.isArchived });
-    }
-  };
-
   const batchDelete = async (ids: string[]) => {
     await db.batchDeleteBookmarks(ids);
     setBookmarks((prev) => prev.filter((b) => !ids.includes(b.id)));
@@ -209,10 +201,6 @@ export function BookmarksProvider({ children }: { children: ReactNode }) {
       }
 
       if (filters.isFavorite !== undefined && bookmark.isFavorite !== filters.isFavorite) {
-        return false;
-      }
-
-      if (filters.isArchived !== undefined && bookmark.isArchived !== filters.isArchived) {
         return false;
       }
 
@@ -264,7 +252,6 @@ export function BookmarksProvider({ children }: { children: ReactNode }) {
         updateBookmark,
         deleteBookmark,
         toggleFavorite,
-        toggleArchive,
         batchDelete,
         filterBookmarks,
         sortBookmarks,

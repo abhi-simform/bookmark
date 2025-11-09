@@ -21,7 +21,6 @@ export default function CollectionDetailPage() {
     bookmarks,
     loading,
     toggleFavorite,
-    toggleArchive,
     deleteBookmark,
     refresh,
   } = useBookmarks();
@@ -36,7 +35,7 @@ export default function CollectionDetailPage() {
 
   // Filter bookmarks by collection
   const collectionBookmarks = bookmarks.filter(
-    (bookmark) => bookmark.collectionId === collectionId && !bookmark.isArchived
+    (bookmark) => bookmark.collectionId === collectionId
   );
 
   const filteredBookmarks = collectionBookmarks.filter((bookmark) => {
@@ -153,7 +152,6 @@ export default function CollectionDetailPage() {
             <BookmarkGrid
               bookmarks={filteredBookmarks}
               onToggleFavorite={toggleFavorite}
-              onToggleArchive={toggleArchive}
               onDelete={deleteBookmark}
               onEdit={handleEdit}
               onMove={handleMove}

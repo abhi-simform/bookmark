@@ -23,7 +23,6 @@ export interface Database {
           collection_id: string
           tags: string[]
           is_favorite: boolean
-          is_archived: boolean
           created_at: string
           last_modified_at: string
         }
@@ -40,7 +39,6 @@ export interface Database {
           collection_id: string
           tags?: string[]
           is_favorite?: boolean
-          is_archived?: boolean
           created_at?: string
           last_modified_at?: string
         }
@@ -57,7 +55,6 @@ export interface Database {
           collection_id?: string
           tags?: string[]
           is_favorite?: boolean
-          is_archived?: boolean
           created_at?: string
           last_modified_at?: string
         }

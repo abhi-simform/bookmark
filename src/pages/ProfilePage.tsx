@@ -123,7 +123,6 @@ export default function ProfilePage() {
             tags: bookmark.tags || [],
             favicon: bookmark.favicon,
             isFavorite: bookmark.isFavorite || false,
-            isArchived: bookmark.isArchived || false,
             type: bookmark.type || 'link',
             platform: bookmark.platform || 'web',
           });
