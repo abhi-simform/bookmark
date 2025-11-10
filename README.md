@@ -19,7 +19,6 @@ A mobile-first Progressive Web App for managing bookmarks with offline support a
 - ✅ **Auto Metadata Fetching** - Automatically fetch title, description, and thumbnails from URLs
 - ✅ **Background Sync** - Thumbnail fetching happens in the background without blocking UI
 - ✅ **Import/Export** - Export bookmarks to JSON or import from backup files
-- ✅ **Dark Mode** - Automatic dark mode support
 
 ### Mobile UI Features
 - ✅ **Bottom Navigation** - Easy thumb-reach navigation
