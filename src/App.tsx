@@ -17,6 +17,7 @@ import SearchPage from './pages/SearchPage';
 import ProfilePage from './pages/ProfilePage';
 import SignInPage from './pages/SignInPage';
 import SignUpPage from './pages/SignUpPage';
+import ShareTargetPage from './pages/ShareTargetPage';
 import AddBookmarkSheet from './components/bookmarks/AddBookmarkSheet';
 
 function App() {
@@ -110,6 +111,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <ProfilePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/share"
+            element={
+              <ProtectedRoute>
+                <ShareTargetPage />
               </ProtectedRoute>
             }
           />

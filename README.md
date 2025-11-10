@@ -29,6 +29,7 @@ A mobile-first Progressive Web App for managing bookmarks with offline support a
 - ✅ **Swipe Gestures** - Swipe actions on bookmark cards
 - ✅ **Touch-Friendly** - All buttons meet 44px minimum tap target size
 - ✅ **Safe Area Support** - Proper handling of notched devices
+- ✅ **Web Share Target** - Receive shared links from other apps (appears in system share menu)
 
 ## 📱 Mobile-First Features
 
@@ -44,6 +45,24 @@ A mobile-first Progressive Web App for managing bookmarks with offline support a
 - **Pull-to-Refresh** - Natural refresh gesture
 - **Swipeable Cards** - Gesture-based actions
 - **Touch-Friendly Forms** - Large inputs and buttons
+
+### 📤 Web Share Target (Share to App)
+
+The PWA integrates with your device's native share menu! When you share a link from any app (browser, Twitter, etc.), **Bookmark Manager** will appear as a share target.
+
+**How to use:**
+1. Install the PWA on your device (see installation instructions below)
+2. Find a link you want to bookmark in any app (browser, social media, etc.)
+3. Tap the **Share** button
+4. Select **Bookmark Manager** from the share sheet
+5. The app opens with the URL pre-filled - edit title/description and save!
+
+**Supported share data:**
+- URL (required) - The link to bookmark
+- Title (optional) - Pre-fills the bookmark title
+- Text (optional) - Pre-fills the description
+
+**Note:** The Web Share Target API requires the PWA to be installed on your device. It won't appear in the share menu when accessing via browser.
 
 ## 🛠️ Tech Stack
 

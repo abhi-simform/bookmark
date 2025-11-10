@@ -30,6 +30,16 @@ export default defineConfig({
         orientation: 'portrait-primary',
         scope: process.env.NODE_ENV === 'production' ? '/bookmark/' : '/',
         start_url: process.env.NODE_ENV === 'production' ? '/bookmark/' : '/',
+        share_target: {
+          action: process.env.NODE_ENV === 'production' ? '/bookmark/share' : '/share',
+          method: 'GET',
+          enctype: 'application/x-www-form-urlencoded',
+          params: {
+            title: 'title',
+            text: 'text',
+            url: 'url'
+          }
+        },
         icons: [
           {
             src: process.env.NODE_ENV === 'production' ? '/bookmark/favicon-96x96.png' : '/favicon-96x96.png',
