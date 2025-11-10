@@ -44,11 +44,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }, 1000); // 1 second delay to ensure bookmarks are loaded in UI
     });
 
-    // Get initial session - NO automatic sync here
+    // Get initial session - sync if user is already logged in
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
+      
+      // If user is already logged in (e.g., page refresh), sync from cloud
+      if (session?.user && !hasPerformedInitialSync) {
+        hasPerformedInitialSync = true;
+        setSyncing(true);
+        syncService.initialSync(session.user.id).catch((error) => {
+          console.error('Initial sync failed:', error);
+          setSyncing(false);
+        });
+      }
     });
 
     // Listen for auth changes - ONLY sync on SIGNED_IN event
