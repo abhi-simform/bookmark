@@ -143,7 +143,7 @@ export function BookmarkCard({
                       setShowMenu(false);
                     }}
                   />
-                  <div className="absolute right-0 bottom-full mb-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-20 animate-scale-in">
+                  <div className="absolute right-0 bottom-full mb-2 w-52 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-20 animate-scale-in">
                     {onEdit && (
                       <button
                         onClick={e => {
@@ -151,7 +151,7 @@ export function BookmarkCard({
                           onEdit(bookmark);
                           setShowMenu(false);
                         }}
-                        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-left"
+                        className="w-full flex items-center gap-3 px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-left text-sm"
                       >
                         <Pencil className="w-4 h-4" />
                         <span>Edit</span>
@@ -164,7 +164,7 @@ export function BookmarkCard({
                           onMove(bookmark);
                           setShowMenu(false);
                         }}
-                        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-left"
+                        className="w-full flex items-center gap-3 px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-left text-sm"
                       >
                         <FolderInput className="w-4 h-4" />
                         <span>Move to Collection</span>
@@ -176,7 +176,7 @@ export function BookmarkCard({
                         onDelete(bookmark.id);
                         setShowMenu(false);
                       }}
-                      className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-left text-red-600 dark:text-red-400"
+                      className="w-full flex items-center gap-3 px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-left text-sm text-red-600 dark:text-red-400"
                     >
                       <Trash2 className="w-4 h-4" />
                       <span>Delete</span>

@@ -1,5 +1,5 @@
 import { openDB, DBSchema, IDBPDatabase } from 'idb';
-import type { Bookmark, Collection, Tag } from '@/types';
+import type { Bookmark, Collection } from '@/types';
 
 interface BookmarkDB extends DBSchema {
   bookmarks: {
@@ -18,10 +18,6 @@ interface BookmarkDB extends DBSchema {
       'by-parent': string;
       'by-order': number;
     };
-  };
-  tags: {
-    key: string;
-    value: Tag;
   };
 }
 
@@ -46,11 +42,6 @@ export async function initDB(): Promise<IDBPDatabase<BookmarkDB>> {
       });
       collectionStore.createIndex('by-parent', 'parentId');
       collectionStore.createIndex('by-order', 'order');
-
-      // Tags store
-      db.createObjectStore('tags', {
-        keyPath: 'id',
-      });
     },
   });
 
@@ -211,22 +202,6 @@ export async function restoreCollection(id: string): Promise<void> {
   }
 }
 
-// Tag operations
-export async function getAllTags(): Promise<Tag[]> {
-  const db = await getDB();
-  return db.getAll('tags');
-}
-
-export async function addTag(tag: Tag): Promise<void> {
-  const db = await getDB();
-  await db.put('tags', tag);
-}
-
-export async function deleteTag(id: string): Promise<void> {
-  const db = await getDB();
-  await db.delete('tags', id);
-}
-
 // Batch operations
 export async function batchDeleteBookmarks(ids: string[]): Promise<void> {
   const db = await getDB();
@@ -243,11 +218,10 @@ export async function batchUpdateBookmarks(bookmarks: Bookmark[]): Promise<void>
 // Clear all data (for user sign out)
 export async function clearAllData(): Promise<void> {
   const db = await getDB();
-  const tx = db.transaction(['bookmarks', 'collections', 'tags'], 'readwrite');
+  const tx = db.transaction(['bookmarks', 'collections'], 'readwrite');
   await Promise.all([
     tx.objectStore('bookmarks').clear(),
     tx.objectStore('collections').clear(),
-    tx.objectStore('tags').clear(),
     tx.done,
   ]);
 }
