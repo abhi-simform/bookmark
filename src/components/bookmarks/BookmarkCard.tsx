@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { ExternalLink, Star, MoreVertical, Pencil, Trash2, FolderInput, Globe } from 'lucide-react';
 import type { Bookmark } from '@/types';
 import { cn, formatDate, getDomainFromUrl } from '@/lib/utils';
-import { useLongPress } from '@/hooks/useLongPress';
 import { thumbnailService } from '@/lib/thumbnailService';
 
 interface BookmarkCardProps {
@@ -12,8 +11,6 @@ interface BookmarkCardProps {
   onDelete: (id: string) => void;
   onEdit?: (bookmark: Bookmark) => void;
   onMove?: (bookmark: Bookmark) => void;
-  onSelect?: (id: string) => void;
-  isSelected?: boolean;
 }
 
 export function BookmarkCard({
@@ -22,24 +19,17 @@ export function BookmarkCard({
   onDelete,
   onEdit,
   onMove,
-  onSelect,
-  isSelected,
 }: BookmarkCardProps) {
   const [showMenu, setShowMenu] = useState(false);
 
-  const longPressHandlers = useLongPress({
-    onLongPress: () => onSelect?.(bookmark.id),
-    onPress: () => window.open(bookmark.url, '_blank'),
-  });
+  const handleClick = () => {
+    window.open(bookmark.url, '_blank');
+  };
 
   return (
     <div
-      {...longPressHandlers}
-      className={cn(
-        'bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden transition-all flex',
-        'active:scale-[0.98]',
-        isSelected && 'ring-2 ring-primary'
-      )}
+      onClick={handleClick}
+      className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden transition-all flex cursor-pointer active:scale-[0.98]"
     >
       {/* Thumbnail */}
       <div className="w-28 h-full flex-shrink-0 bg-gray-100 dark:bg-gray-900">
