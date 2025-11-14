@@ -65,9 +65,10 @@ export class SyncService {
 
   // Sync collections from local to Supabase
   async syncCollectionsToCloud(userId: string): Promise<void> {
-    const localCollections = await db.getAllCollections();
+    // Get all collections including deleted ones for sync
+    const allCollections = await (await db.getDB()).getAll('collections');
 
-    for (const collection of localCollections) {
+    for (const collection of allCollections) {
       try {
         // Check if collection exists in Supabase
         const { data: existing } = await supabase
@@ -88,6 +89,8 @@ export class SyncService {
                 color: collection.color,
                 icon: collection.icon,
                 order: collection.order,
+                is_deleted: collection.isDeleted || false,
+                deleted_at: collection.deletedAt ? new Date(collection.deletedAt).toISOString() : null,
                 last_modified_at: new Date(collection.lastModifiedAt).toISOString(),
               })
               .eq('id', collection.id)
@@ -103,6 +106,8 @@ export class SyncService {
             color: collection.color || '#6366f1',
             icon: collection.icon || null,
             order: collection.order || 0,
+            is_deleted: collection.isDeleted || false,
+            deleted_at: collection.deletedAt ? new Date(collection.deletedAt).toISOString() : null,
             created_at: new Date(collection.createdAt).toISOString(),
             last_modified_at: new Date(collection.lastModifiedAt).toISOString(),
           });
@@ -133,21 +138,25 @@ export class SyncService {
 
     if (!cloudCollections) return;
 
-    const localCollections = await db.getAllCollections();
+    // Get all local collections including deleted ones
+    const dbInstance = await db.getDB();
+    const localCollections = await dbInstance.getAll('collections');
     const localMap = new Map(localCollections.map(c => [c.id, c]));
 
     for (const cloudCol of cloudCollections) {
       const local = localMap.get(cloudCol.id);
       
       if (!local) {
-        // Add new collection from cloud
-        await db.addCollection({
+        // Add new collection from cloud (including soft-deleted ones)
+        await dbInstance.put('collections', {
           id: cloudCol.id,
           name: cloudCol.name,
           description: cloudCol.description || '',
           color: cloudCol.color || '#6366f1',
           icon: cloudCol.icon || 'folder',
           order: cloudCol.order || 0,
+          isDeleted: cloudCol.is_deleted || false,
+          deletedAt: cloudCol.deleted_at ? new Date(cloudCol.deleted_at).getTime() : undefined,
           createdAt: new Date(cloudCol.created_at).getTime(),
           lastModifiedAt: new Date(cloudCol.last_modified_at).getTime(),
         });
@@ -155,13 +164,15 @@ export class SyncService {
         // Update if cloud version is newer
         const cloudTime = new Date(cloudCol.last_modified_at).getTime();
         if (cloudTime > local.lastModifiedAt) {
-          await db.updateCollection({
+          await dbInstance.put('collections', {
             ...local,
             name: cloudCol.name,
             description: cloudCol.description || '',
             color: cloudCol.color || '#6366f1',
             icon: cloudCol.icon || local.icon || 'folder',
             order: cloudCol.order || 0,
+            isDeleted: cloudCol.is_deleted || false,
+            deletedAt: cloudCol.deleted_at ? new Date(cloudCol.deleted_at).getTime() : undefined,
             lastModifiedAt: cloudTime,
           });
         }
@@ -171,9 +182,11 @@ export class SyncService {
 
   // Sync bookmarks from local to Supabase
   async syncBookmarksToCloud(userId: string): Promise<void> {
-    const localBookmarks = await db.getAllBookmarks();
+    // Get all bookmarks including deleted ones for sync
+    const dbInstance = await db.getDB();
+    const allBookmarks = await dbInstance.getAll('bookmarks');
 
-    for (const bookmark of localBookmarks) {
+    for (const bookmark of allBookmarks) {
       try {
         const { data: existing } = await supabase
           .from('bookmarks')
@@ -196,6 +209,8 @@ export class SyncService {
                 is_favorite: bookmark.isFavorite,
                 type: bookmark.type,
                 platform: bookmark.platform,
+                is_deleted: bookmark.isDeleted || false,
+                deleted_at: bookmark.deletedAt ? new Date(bookmark.deletedAt).toISOString() : null,
                 last_modified_at: new Date(bookmark.lastModifiedAt).toISOString(),
               })
               .eq('id', bookmark.id)
@@ -215,6 +230,8 @@ export class SyncService {
             is_favorite: bookmark.isFavorite || false,
             type: bookmark.type || 'link',
             platform: bookmark.platform || 'web',
+            is_deleted: bookmark.isDeleted || false,
+            deleted_at: bookmark.deletedAt ? new Date(bookmark.deletedAt).toISOString() : null,
             created_at: new Date(bookmark.createdAt).toISOString(),
             last_modified_at: new Date(bookmark.lastModifiedAt).toISOString(),
           };
@@ -247,15 +264,17 @@ export class SyncService {
 
     if (!cloudBookmarks) return;
 
-    const localBookmarks = await db.getAllBookmarks();
+    // Get all local bookmarks including deleted ones
+    const dbInstance = await db.getDB();
+    const localBookmarks = await dbInstance.getAll('bookmarks');
     const localMap = new Map(localBookmarks.map(b => [b.id, b]));
 
     for (const cloudBm of cloudBookmarks) {
       const local = localMap.get(cloudBm.id);
       
       if (!local) {
-        // Add new bookmark from cloud
-        await db.addBookmark({
+        // Add new bookmark from cloud (including soft-deleted ones)
+        await dbInstance.put('bookmarks', {
           id: cloudBm.id,
           url: cloudBm.url,
           title: cloudBm.title,
@@ -266,6 +285,8 @@ export class SyncService {
           isFavorite: cloudBm.is_favorite || false,
           type: cloudBm.type || 'link',
           platform: cloudBm.platform || 'web',
+          isDeleted: cloudBm.is_deleted || false,
+          deletedAt: cloudBm.deleted_at ? new Date(cloudBm.deleted_at).getTime() : undefined,
           createdAt: new Date(cloudBm.created_at).getTime(),
           lastModifiedAt: new Date(cloudBm.last_modified_at).getTime(),
         });
@@ -273,7 +294,7 @@ export class SyncService {
         // Update if cloud version is newer
         const cloudTime = new Date(cloudBm.last_modified_at).getTime();
         if (cloudTime > local.lastModifiedAt) {
-          await db.updateBookmark({
+          await dbInstance.put('bookmarks', {
             ...local,
             url: cloudBm.url,
             title: cloudBm.title,
@@ -283,6 +304,8 @@ export class SyncService {
             isFavorite: cloudBm.is_favorite || false,
             type: cloudBm.type || 'link',
             platform: cloudBm.platform || 'web',
+            isDeleted: cloudBm.is_deleted || false,
+            deletedAt: cloudBm.deleted_at ? new Date(cloudBm.deleted_at).getTime() : undefined,
             lastModifiedAt: cloudTime,
           });
         }

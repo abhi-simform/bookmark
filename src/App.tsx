@@ -8,6 +8,7 @@ import { useBottomSheet } from './hooks/useBottomSheet';
 import { useCollections } from './hooks/useCollections';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { useAuth } from './contexts/AuthContext';
+import * as db from './lib/db';
 
 // Pages
 import HomePage from './pages/HomePage';
@@ -15,6 +16,7 @@ import CollectionsPage from './pages/CollectionsPage';
 import CollectionDetailPage from './pages/CollectionDetailPage';
 import SearchPage from './pages/SearchPage';
 import ProfilePage from './pages/ProfilePage';
+import RecycleBinPage from './pages/RecycleBinPage';
 import SignInPage from './pages/SignInPage';
 import SignUpPage from './pages/SignUpPage';
 import ShareTargetPage from './pages/ShareTargetPage';
@@ -24,9 +26,11 @@ function App() {
   const addBookmarkSheet = useBottomSheet();
   const { cleanupDuplicates } = useCollections();
 
-  // Cleanup duplicate collections on app start
+  // Cleanup duplicate collections and old deleted items on app start
   useEffect(() => {
     cleanupDuplicates();
+    // Run cleanup of old deleted items (older than 7 days)
+    db.cleanupOldDeletedItems().catch(console.error);
   }, []);
 
   const { user, loading, syncing } = useAuth();
@@ -111,6 +115,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <ProfilePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/recycle-bin"
+            element={
+              <ProtectedRoute>
+                <RecycleBinPage />
               </ProtectedRoute>
             }
           />

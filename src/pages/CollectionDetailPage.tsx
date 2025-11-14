@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Filter } from 'lucide-react';
+import { ArrowLeft, Filter, Share2 } from 'lucide-react';
 import { useCollections } from '@/hooks/useCollections';
+import { useAuth } from '@/contexts/AuthContext';
 import { useBookmarks } from '@/hooks/useBookmarks';
 import { useBottomSheet } from '@/hooks/useBottomSheet';
 import { BookmarkGrid } from '@/components/bookmarks/BookmarkGrid';
@@ -57,6 +58,44 @@ export default function CollectionDetailPage() {
     moveSheet.open();
   };
 
+  const { user } = useAuth();
+
+  const handleShareCollection = () => {
+    if (!collection) return;
+
+    // Filter out soft-deleted bookmarks from the collection
+    const activeBookmarks = collectionBookmarks.filter(b => !b.isDeleted);
+
+    const exportData = {
+      version: '1.0.0',
+      type: 'collection-share',
+      exportedAt: new Date().toISOString(),
+      sharedBy: user?.email || 'unknown',
+      collection: {
+        name: collection.name,
+        description: collection.description,
+        icon: collection.icon,
+        color: collection.color,
+      },
+      bookmarks: activeBookmarks,
+      stats: {
+        totalBookmarks: activeBookmarks.length,
+        favoriteBookmarks: activeBookmarks.filter(b => b.isFavorite).length,
+      }
+    };
+
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    const fileName = collection.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    link.download = `collection-${fileName}-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   if (!collection) {
     return (
       <div className="flex flex-col items-center justify-center h-screen p-4">
@@ -97,6 +136,14 @@ export default function CollectionDetailPage() {
               </p>
             )}
           </div>
+          <button
+            onClick={handleShareCollection}
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+            aria-label="Share collection"
+            title="Share collection"
+          >
+            <Share2 className="w-5 h-5" />
+          </button>
           <button
             onClick={() => setFilter(filter === 'all' ? 'favorite' : 'all')}
             className={`p-2 rounded-lg transition-colors ${

@@ -2,13 +2,14 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCollections } from '@/hooks/useCollections';
 import { useBookmarks } from '@/hooks/useBookmarks';
-import { FolderOpen, Plus, MoreVertical, Pencil, Trash2 } from 'lucide-react';
+import { FolderOpen, Plus, MoreVertical, Pencil, Trash2, Share2 } from 'lucide-react';
 import { BottomSheet } from '@/components/mobile/BottomSheet';
 import { ConfirmDialog } from '@/components/mobile/ConfirmDialog';
 import { useBottomSheet } from '@/hooks/useBottomSheet';
 import { hapticFeedback } from '@/lib/haptics';
 import { IconPicker, CollectionIconName, getCollectionIcon } from '@/components/collections/IconPicker';
 import { ColorPicker, getColorClass } from '@/components/collections/ColorPicker';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function CollectionsPage() {
   const navigate = useNavigate();
@@ -134,6 +135,47 @@ export default function CollectionsPage() {
     }
   };
 
+  const { user } = useAuth();
+
+  const handleShareCollection = (e: React.MouseEvent, collection: typeof collections[0]) => {
+    e.stopPropagation();
+    setActiveMenu(null);
+
+    // Filter bookmarks for this collection, excluding soft-deleted ones
+    const collectionBookmarks = bookmarks
+      .filter(b => b.collectionId === collection.id && !b.isDeleted);
+
+    const exportData = {
+      version: '1.0.0',
+      type: 'collection-share',
+      exportedAt: new Date().toISOString(),
+      sharedBy: user?.email || 'unknown',
+      collection: {
+        name: collection.name,
+        description: collection.description,
+        icon: collection.icon,
+        color: collection.color,
+      },
+      bookmarks: collectionBookmarks,
+      stats: {
+        totalBookmarks: collectionBookmarks.length,
+        favoriteBookmarks: collectionBookmarks.filter(b => b.isFavorite).length,
+      }
+    };
+
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    const fileName = collection.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    link.download = `collection-${fileName}-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    hapticFeedback.success();
+  };
+
   return (
     <div className="h-screen flex flex-col">
       {/* Header */}
@@ -213,6 +255,13 @@ export default function CollectionsPage() {
                           }}
                         />
                         <div className="absolute right-0 top-full mt-1 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-20 animate-scale-in">
+                          <button
+                            onClick={(e) => handleShareCollection(e, collection)}
+                            className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-left"
+                          >
+                            <Share2 className="w-4 h-4" />
+                            <span>Share</span>
+                          </button>
                           <button
                             onClick={(e) => {
                               e.stopPropagation();

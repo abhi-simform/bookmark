@@ -15,6 +15,8 @@ A mobile-first Progressive Web App for managing bookmarks with offline support a
 - ✅ **Offline-First** - Works completely offline with IndexedDB storage
 - ✅ **Authentication** - Secure user authentication with Supabase Auth
 - ✅ **Collections** - Organize bookmarks into folders with full CRUD operations
+- ✅ **Collection Sharing** - Export and share individual collections with others
+- ✅ **Recycle Bin** - Soft delete with 7-day recovery period before permanent deletion
 - ✅ **Smart Install Prompts** - Browser and device-specific installation instructions
 - ✅ **Auto Metadata Fetching** - Automatically fetch title, description, and thumbnails from URLs
 - ✅ **Background Sync** - Thumbnail fetching happens in the background without blocking UI

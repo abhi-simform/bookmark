@@ -65,11 +65,21 @@ export default function ProfilePage() {
 
   // Handle export bookmarks
   const handleExport = () => {
+    // Filter out soft-deleted items from export
+    const activeBookmarks = bookmarks.filter(b => !b.isDeleted);
+    const activeCollections = collections.filter(c => !c.isDeleted);
+
     const exportData = {
-      bookmarks,
-      collections,
+      version: '1.0.0',
       exportedAt: new Date().toISOString(),
-      version: '1.0.0'
+      exportedBy: user?.email || 'unknown',
+      bookmarks: activeBookmarks,
+      collections: activeCollections,
+      stats: {
+        totalBookmarks: activeBookmarks.length,
+        totalCollections: activeCollections.length,
+        favoriteBookmarks: activeBookmarks.filter(b => b.isFavorite).length,
+      }
     };
 
     const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
@@ -96,43 +106,158 @@ export default function ProfilePage() {
       const text = await file.text();
       const data = JSON.parse(text);
 
-      // Import collections first
-      if (data.collections && Array.isArray(data.collections)) {
-        for (const collection of data.collections) {
-          // Skip if it's the default Miscellaneous collection
-          if (collection.name !== 'Miscellaneous') {
-            await addCollection({
-              name: collection.name,
-              description: collection.description || '',
-              color: collection.color || '#6366f1',
-              icon: collection.icon,
-              order: collection.order || 0,
-            });
+      let importedCollections = 0;
+      let importedBookmarks = 0;
+      let skippedCollections = 0;
+      let skippedBookmarks = 0;
+      const errors: string[] = [];
+      let newCollectionId: string | undefined;
+
+      // Check if this is a shared collection import
+      const isCollectionShare = data.type === 'collection-share' && data.collection;
+
+      if (isCollectionShare) {
+        // Import the shared collection
+        const sharedCollection = data.collection;
+        
+        try {
+          const newCollection = await addCollection({
+            name: sharedCollection.name,
+            description: sharedCollection.description || '',
+            color: sharedCollection.color || '#6366f1',
+            icon: sharedCollection.icon || 'folder',
+            order: collections.length,
+          });
+          newCollectionId = newCollection.id;
+          importedCollections++;
+        } catch (error) {
+          // If collection already exists, try to find it
+          if (error instanceof Error && error.message.includes('already exists')) {
+            const existingCollection = collections.find(
+              c => c.name.toLowerCase() === sharedCollection.name.toLowerCase()
+            );
+            if (existingCollection) {
+              newCollectionId = existingCollection.id;
+              skippedCollections++;
+            } else {
+              errors.push(`Collection "${sharedCollection.name}": ${error.message}`);
+            }
+          } else {
+            errors.push(`Collection "${sharedCollection.name}": ${error instanceof Error ? error.message : 'Unknown error'}`);
+          }
+        }
+      } else {
+        // Import collections from full export
+        if (data.collections && Array.isArray(data.collections)) {
+          for (const collection of data.collections) {
+            // Skip if it's the default Miscellaneous collection
+            if (collection.name === 'Miscellaneous') {
+              skippedCollections++;
+              continue;
+            }
+
+            // Skip soft-deleted collections
+            if (collection.isDeleted) {
+              skippedCollections++;
+              continue;
+            }
+
+            try {
+              await addCollection({
+                name: collection.name,
+                description: collection.description || '',
+                color: collection.color || '#6366f1',
+                icon: collection.icon || 'folder',
+                order: collection.order || 0,
+              });
+              importedCollections++;
+            } catch (error) {
+              // If collection already exists, skip it
+              if (error instanceof Error && error.message.includes('already exists')) {
+                skippedCollections++;
+              } else {
+                errors.push(`Collection "${collection.name}": ${error instanceof Error ? error.message : 'Unknown error'}`);
+              }
+            }
           }
         }
       }
 
       // Import bookmarks
       if (data.bookmarks && Array.isArray(data.bookmarks)) {
+        // Get the default collection as fallback
+        const defaultCollection = collections.find(c => c.name === 'Miscellaneous');
+        
         for (const bookmark of data.bookmarks) {
-          await addBookmark({
-            url: bookmark.url,
-            title: bookmark.title || 'Imported Bookmark',
-            description: bookmark.description || '',
-            collectionId: bookmark.collectionId,
-            tags: bookmark.tags || [],
-            favicon: bookmark.favicon,
-            isFavorite: bookmark.isFavorite || false,
-            type: bookmark.type || 'link',
-            platform: bookmark.platform || 'web',
-          });
+          // Skip soft-deleted bookmarks
+          if (bookmark.isDeleted) {
+            skippedBookmarks++;
+            continue;
+          }
+
+          // Determine collection ID
+          let targetCollectionId = bookmark.collectionId;
+          
+          // If importing a shared collection, use the new collection ID
+          if (isCollectionShare && newCollectionId) {
+            targetCollectionId = newCollectionId;
+          } else if (!targetCollectionId && defaultCollection) {
+            targetCollectionId = defaultCollection.id;
+          }
+
+          try {
+            await addBookmark({
+              url: bookmark.url,
+              title: bookmark.title || 'Imported Bookmark',
+              description: bookmark.description || '',
+              collectionId: targetCollectionId,
+              tags: bookmark.tags || [],
+              favicon: bookmark.favicon,
+              isFavorite: bookmark.isFavorite || false,
+              type: bookmark.type || 'link',
+              platform: bookmark.platform || 'web',
+            });
+            importedBookmarks++;
+          } catch (error) {
+            errors.push(`Bookmark "${bookmark.title}": ${error instanceof Error ? error.message : 'Unknown error'}`);
+          }
         }
       }
 
-      alert(`Successfully imported ${data.bookmarks?.length || 0} bookmarks and ${data.collections?.length || 0} collections!`);
+      // Show detailed results
+      let message = isCollectionShare 
+        ? `Collection imported!\n\n` 
+        : `Import completed!\n\n`;
+      
+      if (isCollectionShare) {
+        message += `📁 Collection: ${data.collection.name}\n`;
+        message += `✅ Bookmarks imported: ${importedBookmarks}\n`;
+        if (data.sharedBy) {
+          message += `👤 Shared by: ${data.sharedBy}\n`;
+        }
+      } else {
+        message += `✅ Collections imported: ${importedCollections}\n`;
+        message += `✅ Bookmarks imported: ${importedBookmarks}\n`;
+      }
+      
+      if (skippedCollections > 0) {
+        message += `⏭️  Collections skipped: ${skippedCollections}\n`;
+      }
+      if (skippedBookmarks > 0) {
+        message += `⏭️  Bookmarks skipped: ${skippedBookmarks}\n`;
+      }
+      
+      if (errors.length > 0) {
+        message += `\n⚠️  Errors (${errors.length}):\n${errors.slice(0, 5).join('\n')}`;
+        if (errors.length > 5) {
+          message += `\n... and ${errors.length - 5} more`;
+        }
+      }
+
+      alert(message);
     } catch (error) {
       console.error('Import error:', error);
-      alert('Failed to import bookmarks. Please check the file format.');
+      alert(`Failed to import: ${error instanceof Error ? error.message : 'Please check the file format.'}`);
     }
 
     // Reset file input
@@ -229,6 +354,18 @@ export default function ProfilePage() {
           >
             <Download className="w-5 h-5 text-gray-600 dark:text-gray-400" />
             <span className="flex-1 text-left font-medium">Export Bookmarks</span>
+          </button>
+
+          <button
+            onClick={() => navigate('/recycle-bin')}
+            className="w-full flex items-center gap-3 p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 active:scale-[0.98] transition-transform"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-gray-600 dark:text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 6h18"></path>
+              <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+              <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+            </svg>
+            <span className="flex-1 text-left font-medium">Recycle Bin</span>
           </button>
 
           <button

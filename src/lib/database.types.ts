@@ -23,6 +23,8 @@ export interface Database {
           collection_id: string
           tags: string[]
           is_favorite: boolean
+          is_deleted: boolean | null
+          deleted_at: string | null
           created_at: string
           last_modified_at: string
         }
@@ -39,6 +41,8 @@ export interface Database {
           collection_id: string
           tags?: string[]
           is_favorite?: boolean
+          is_deleted?: boolean | null
+          deleted_at?: string | null
           created_at?: string
           last_modified_at?: string
         }
@@ -55,6 +59,8 @@ export interface Database {
           collection_id?: string
           tags?: string[]
           is_favorite?: boolean
+          is_deleted?: boolean | null
+          deleted_at?: string | null
           created_at?: string
           last_modified_at?: string
         }
@@ -69,6 +75,8 @@ export interface Database {
           color: string | null
           parent_id: string | null
           order: number
+          is_deleted: boolean | null
+          deleted_at: string | null
           created_at: string
           last_modified_at: string
         }
@@ -81,6 +89,8 @@ export interface Database {
           color?: string | null
           parent_id?: string | null
           order?: number
+          is_deleted?: boolean | null
+          deleted_at?: string | null
           created_at?: string
           last_modified_at?: string
         }
@@ -93,6 +103,8 @@ export interface Database {
           color?: string | null
           parent_id?: string | null
           order?: number
+          is_deleted?: boolean | null
+          deleted_at?: string | null
           created_at?: string
           last_modified_at?: string
         }

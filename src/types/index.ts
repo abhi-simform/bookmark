@@ -21,6 +21,8 @@ export interface Bookmark {
   tags: string[];
   collectionId?: string;
   isFavorite: boolean;
+  isDeleted?: boolean;
+  deletedAt?: number;
   createdAt: number;
   lastModifiedAt: number;
 }
@@ -33,6 +35,8 @@ export interface Collection {
   color?: string;
   parentId?: string;
   order: number;
+  isDeleted?: boolean;
+  deletedAt?: number;
   createdAt: number;
   lastModifiedAt: number;
 }
