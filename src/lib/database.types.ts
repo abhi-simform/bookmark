@@ -12,10 +12,7 @@ export interface Database {
           description: string | null;
           favicon: string | null;
           thumbnail: string | null;
-          type: string;
-          platform: string | null;
           collection_id: string;
-          tags: string[];
           is_favorite: boolean;
           is_deleted: boolean | null;
           deleted_at: string | null;
@@ -30,10 +27,7 @@ export interface Database {
           description?: string | null;
           favicon?: string | null;
           thumbnail?: string | null;
-          type?: string;
-          platform?: string | null;
           collection_id: string;
-          tags?: string[];
           is_favorite?: boolean;
           is_deleted?: boolean | null;
           deleted_at?: string | null;
@@ -48,10 +42,7 @@ export interface Database {
           description?: string | null;
           favicon?: string | null;
           thumbnail?: string | null;
-          type?: string;
-          platform?: string | null;
           collection_id?: string;
-          tags?: string[];
           is_favorite?: boolean;
           is_deleted?: boolean | null;
           deleted_at?: string | null;

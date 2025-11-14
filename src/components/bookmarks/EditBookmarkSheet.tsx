@@ -17,7 +17,6 @@ export default function EditBookmarkSheet({ bookmark, onClose }: EditBookmarkShe
   const [description, setDescription] = useState(bookmark.description || '');
   const [url, setUrl] = useState(bookmark.url);
   const [collectionId, setCollectionId] = useState(bookmark.collectionId);
-  const [tags, setTags] = useState(bookmark.tags.join(', '));
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -33,10 +32,6 @@ export default function EditBookmarkSheet({ bookmark, onClose }: EditBookmarkShe
         title: title.trim(),
         description: description.trim(),
         collectionId: collectionId,
-        tags: tags
-          .split(',')
-          .map(tag => tag.trim())
-          .filter(tag => tag.length > 0),
       });
 
       hapticFeedback.success();
@@ -121,23 +116,6 @@ export default function EditBookmarkSheet({ bookmark, onClose }: EditBookmarkShe
             </option>
           ))}
         </select>
-      </div>
-
-      {/* Tags Field */}
-      <div>
-        <label htmlFor="edit-tags" className="block text-sm font-medium mb-2">
-          Tags
-        </label>
-        <input
-          id="edit-tags"
-          type="text"
-          value={tags}
-          onChange={e => setTags(e.target.value)}
-          placeholder="tag1, tag2, tag3"
-          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-base focus:ring-2 focus:ring-primary focus:border-transparent"
-          disabled={isLoading}
-        />
-        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Separate tags with commas</p>
       </div>
 
       {/* Submit Button */}

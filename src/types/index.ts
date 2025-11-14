@@ -1,14 +1,3 @@
-export type BookmarkType = 'article' | 'video' | 'social' | 'webpage';
-
-export type BookmarkPlatform =
-  | 'youtube'
-  | 'twitter'
-  | 'github'
-  | 'medium'
-  | 'reddit'
-  | 'linkedin'
-  | 'other';
-
 export interface Bookmark {
   id: string;
   url: string;
@@ -16,9 +5,6 @@ export interface Bookmark {
   description?: string;
   favicon?: string;
   thumbnail?: string;
-  type: BookmarkType;
-  platform: BookmarkPlatform;
-  tags: string[];
   collectionId?: string;
   isFavorite: boolean;
   isDeleted?: boolean;
@@ -41,12 +27,6 @@ export interface Collection {
   lastModifiedAt: number;
 }
 
-export interface Tag {
-  id: string;
-  name: string;
-  count: number;
-}
-
 export interface ImportResult {
   success: number;
   failed: number;
@@ -63,9 +43,6 @@ export interface SyncStatus {
 
 export interface SearchFilters {
   query?: string;
-  type?: BookmarkType;
-  platform?: BookmarkPlatform;
-  tags?: string[];
   collectionId?: string;
   isFavorite?: boolean;
   dateFrom?: number;
@@ -77,8 +54,6 @@ export interface MetadataResult {
   description?: string;
   favicon?: string;
   thumbnail?: string;
-  type: BookmarkType;
-  platform: BookmarkPlatform;
 }
 
 export type ViewMode = 'card' | 'list' | 'grid';

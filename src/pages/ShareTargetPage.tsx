@@ -56,9 +56,6 @@ export default function ShareTargetPage() {
         description,
         collectionId: selectedCollection || collections[0]?.id || '',
         isFavorite: false,
-        tags: [],
-        type: 'webpage',
-        platform: 'other',
       });
 
       // Navigate to home after saving

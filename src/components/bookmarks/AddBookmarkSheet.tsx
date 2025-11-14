@@ -104,10 +104,7 @@ export default function AddBookmarkSheet({ onClose }: AddBookmarkSheetProps) {
         description: description.trim(),
         favicon: metadata.favicon,
         thumbnail: metadata.thumbnail,
-        type: metadata.type,
-        platform: metadata.platform,
         collectionId: collectionId,
-        tags: [],
         isFavorite: false,
       });
 

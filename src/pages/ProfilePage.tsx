@@ -231,11 +231,8 @@ export default function ProfilePage() {
               title: bookmark.title || 'Imported Bookmark',
               description: bookmark.description || '',
               collectionId: targetCollectionId,
-              tags: bookmark.tags || [],
               favicon: bookmark.favicon,
               isFavorite: bookmark.isFavorite || false,
-              type: bookmark.type || 'link',
-              platform: bookmark.platform || 'web',
             });
             importedBookmarks++;
           } catch (error) {
