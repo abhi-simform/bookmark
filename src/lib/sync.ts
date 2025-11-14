@@ -438,12 +438,17 @@ export class SyncService {
     }
   }
 
-  // Delete collection from cloud
+  // Delete collection from cloud (soft delete)
   async deleteCollectionFromCloud(userId: string, collectionId: string): Promise<void> {
     try {
+      const now = new Date().toISOString();
       await supabase
         .from('collections')
-        .delete()
+        .update({
+          is_deleted: true,
+          deleted_at: now,
+          last_modified_at: now,
+        })
         .eq('id', collectionId)
         .eq('user_id', userId);
     } catch (error) {

@@ -131,7 +131,7 @@ export default function CollectionDetailPage() {
           <div className="flex-1">
             <h1 className="text-xl font-semibold">{collection.name}</h1>
             {collection.description && (
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <p className="text-sm text-gray-500 dark:text-gray-400 text-ellipsis line-clamp-1">
                 {collection.description}
               </p>
             )}
@@ -189,7 +189,7 @@ export default function CollectionDetailPage() {
                   ? 'No favorite bookmarks'
                   : 'No bookmarks yet'}
               </h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mb-6 max-w-xs">
+              <p className="text-sm text-gray-500 dark:text-gray-400 text-ellipsis line-clamp-1 mb-6 max-w-xs">
                 {filter === 'favorite'
                   ? 'Mark bookmarks as favorite to see them here'
                   : 'Tap the + button to add your first bookmark to this collection'}

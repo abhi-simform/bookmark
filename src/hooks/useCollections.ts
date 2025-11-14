@@ -145,36 +145,25 @@ export function useCollections() {
   const deleteCollection = async (id: string) => {
     const existing = collections.find((c) => c.id === id);
     
-    // Prevent deletion of Miscellaneous collection
-    if (existing?.name === 'Miscellaneous') {
-      throw new Error('Cannot delete Miscellaneous collection');
-    }
+    // Soft delete the collection locally (this also soft deletes bookmarks)
+    await db.deleteCollection(id);
     
-    // Delete all bookmarks in this collection first
-    const bookmarksInCollection = await db.getBookmarksByCollection(id);
-    for (const bookmark of bookmarksInCollection) {
-      await db.deleteBookmark(bookmark.id);
-      // Delete from cloud if user is logged in
-      if (user) {
-        syncService.deleteBookmarkFromCloud(user.id, bookmark.id).catch(console.error);
-      }
-    }
-    
-    // Optimistic update - update UI immediately
+    // Optimistically mark as deleted in UI
     setCollections((prev) => prev.filter((c) => c.id !== id));
     
-    // Then delete from IndexedDB in the background
-    db.deleteCollection(id).catch(error => {
-      console.error('Failed to delete collection from IndexedDB:', error);
-      // Rollback on error - restore the collection
-      if (existing) {
-        setCollections((prev) => [...prev, existing]);
-      }
-    });
-    
-    // Delete from cloud in the background if user is logged in
+    // Sync the soft delete to cloud
     if (user) {
-      syncService.deleteCollectionFromCloud(user.id, id).catch(console.error);
+      // Use deleteCollectionFromCloud which now does soft delete
+      syncService.deleteCollectionFromCloud(user.id, id).catch(error => {
+        console.error('Failed to sync collection deletion to cloud:', error);
+        // Note: Local soft delete already happened, so we don't rollback
+      });
+      
+      // Also sync any soft-deleted bookmarks
+      const bookmarksInCollection = await db.getBookmarksByCollection(id);
+      for (const bookmark of bookmarksInCollection) {
+        syncService.deleteBookmarkFromCloud(user.id, bookmark.id).catch(console.error);
+      }
     }
   };
 

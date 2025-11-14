@@ -45,7 +45,7 @@ export default function MoveToCollectionSheet({ bookmark, onClose }: MoveToColle
       {/* Current Bookmark Info */}
       <div className="pb-4 border-b border-gray-200 dark:border-gray-700">
         <h3 className="font-semibold mb-1 line-clamp-1">{bookmark.title}</h3>
-        <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-1">
+        <p className="text-sm text-gray-500 dark:text-gray-400 text-ellipsis line-clamp-1 line-clamp-1">
           {bookmark.url}
         </p>
       </div>
@@ -80,7 +80,7 @@ export default function MoveToCollectionSheet({ bookmark, onClose }: MoveToColle
               <div className="flex-1 text-left min-w-0">
                 <p className="font-medium truncate">{collection.name}</p>
                 {collection.description && (
-                  <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
+                  <p className="text-sm text-gray-500 dark:text-gray-400 text-ellipsis line-clamp-1 truncate">
                     {collection.description}
                   </p>
                 )}

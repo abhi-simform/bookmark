@@ -150,7 +150,7 @@ export default function RecycleBinPage() {
                 <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
                   Recycle Bin
                 </h1>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
+                <p className="text-sm text-gray-500 dark:text-gray-400 text-ellipsis line-clamp-1">
                   Items will be automatically deleted after 7 days
                 </p>
               </div>
@@ -217,10 +217,10 @@ export default function RecycleBinPage() {
               <div className="flex gap-3">
                 <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-500 flex-shrink-0 mt-0.5" />
                 <div>
-                  <h3 className="text-sm font-medium text-amber-900 dark:text-amber-100">
+                  <h3 className="text-sm font-medium text-amber-900 dark:text-amber-100 text-ellipsis">
                     Items will be automatically deleted after 7 days
                   </h3>
-                  <p className="text-sm text-amber-700 dark:text-amber-300 mt-1">
+                  <p className="text-sm text-amber-700 dark:text-amber-300 mt-1 text-ellipsis">
                     Restore items before they are permanently removed from the recycle bin.
                   </p>
                 </div>
@@ -241,7 +241,7 @@ export default function RecycleBinPage() {
                         <h3 className="font-medium text-gray-900 dark:text-white truncate">
                           {bookmark.title}
                         </h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 truncate mt-1">
+                        <p className="text-sm text-gray-500 dark:text-gray-400 text-ellipsis line-clamp-1 truncate mt-1">
                           {bookmark.url}
                         </p>
                         <p className="text-xs text-amber-600 dark:text-amber-500 mt-2">
@@ -290,7 +290,7 @@ export default function RecycleBinPage() {
                           {collection.name}
                         </h3>
                         {collection.description && (
-                          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                          <p className="text-sm text-gray-500 dark:text-gray-400 text-ellipsis line-clamp-1 mt-1">
                             {collection.description}
                           </p>
                         )}

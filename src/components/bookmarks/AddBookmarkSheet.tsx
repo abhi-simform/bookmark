@@ -28,20 +28,7 @@ export default function AddBookmarkSheet({ onClose }: AddBookmarkSheetProps) {
     icon: 'folder' as CollectionIconName,
     color: '#6366f1',
   });
-  // Set default collection when collections are loaded
-  useEffect(() => {
-    if (collections.length > 0 && !collectionId) {
-      // Find "Miscellaneous" collection (or old "All" for backwards compatibility)
-      const miscCollection = collections.find(c => c.name === 'Miscellaneous' || c.name === 'All');
-      
-      if (miscCollection) {
-        setCollectionId(miscCollection.id);
-      } else {
-        // Use first available collection
-        setCollectionId(collections[0].id);
-      }
-    }
-  }, [collections, collectionId]);
+  // Note: No auto-selection of collection - user must choose explicitly
 
   // Auto-fetch metadata when URL changes
   useEffect(() => {
@@ -211,31 +198,47 @@ export default function AddBookmarkSheet({ onClose }: AddBookmarkSheetProps) {
         <label htmlFor="collection" className="block text-sm font-medium mb-2">
           Collection <span className="text-red-500">*</span>
         </label>
-        <div className="space-y-2">
-          <select
-            id="collection"
-            value={collectionId}
-            onChange={(e) => {
-              const value = e.target.value;
-              if (value === 'ADD_NEW') {
-                setShowNewCollectionSheet(true);
-              } else {
-                setCollectionId(value);
-              }
-            }}
-            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-base focus:ring-2 focus:ring-primary focus:border-transparent"
-            disabled={isLoading}
-            required
-          >
-            <option value="">Select a collection</option>
-            {collections.map((collection) => (
-              <option key={collection.id} value={collection.id}>
-                {collection.name}
-              </option>
-            ))}
-            <option value="ADD_NEW">➕ Add new collection</option>
-          </select>
-        </div>
+        {collections.length === 0 ? (
+          <div className="space-y-2">
+            <div className="px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 text-sm text-gray-600 dark:text-gray-400">
+              No collections yet. Create one to organize your bookmarks.
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowNewCollectionSheet(true)}
+              className="w-full px-4 py-3 bg-primary text-primary-foreground rounded-lg font-medium flex items-center justify-center gap-2 transition-all active:scale-95"
+            >
+              <Plus className="w-5 h-5" />
+              Create Collection
+            </button>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            <select
+              id="collection"
+              value={collectionId}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value === 'ADD_NEW') {
+                  setShowNewCollectionSheet(true);
+                } else {
+                  setCollectionId(value);
+                }
+              }}
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-base focus:ring-2 focus:ring-primary focus:border-transparent"
+              disabled={isLoading}
+              required
+            >
+              <option value="">Select a collection</option>
+              {collections.map((collection) => (
+                <option key={collection.id} value={collection.id}>
+                  {collection.name}
+                </option>
+              ))}
+              <option value="ADD_NEW">➕ Add new collection</option>
+            </select>
+          </div>
+        )}
       </div>
 
       {/* Submit Button */}

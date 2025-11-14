@@ -39,7 +39,7 @@ export function BookmarkGrid({
           </svg>
         </div>
         <h3 className="text-lg font-semibold mb-2">No bookmarks yet</h3>
-        <p className="text-sm text-gray-500 dark:text-gray-400 text-center max-w-xs">
+        <p className="text-sm text-gray-500 dark:text-gray-400 text-ellipsis line-clamp-1 text-center max-w-xs">
           Start saving your favorite links by tapping the + button below
         </p>
       </div>

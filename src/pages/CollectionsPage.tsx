@@ -36,12 +36,6 @@ export default function CollectionsPage() {
     hasBookmarks: boolean;
   } | null>(null);
 
-  // Check if collection is the default Miscellaneous collection
-  const isDefaultCollection = (collectionId: string): boolean => {
-    const collection = collections.find(c => c.id === collectionId);
-    return collection?.name === 'Miscellaneous';
-  };
-
   // Count bookmarks per collection
   const getBookmarkCount = (collectionId: string) => {
     return bookmarks.filter(b => b.collectionId === collectionId).length;
@@ -59,11 +53,6 @@ export default function CollectionsPage() {
   };
 
   const handleRename = (collection: typeof collections[0]) => {
-    // Prevent renaming Miscellaneous collection
-    if (collection.name === 'Miscellaneous') {
-      return;
-    }
-    
     setEditingCollection({
       id: collection.id,
       name: collection.name,
@@ -228,7 +217,7 @@ export default function CollectionsPage() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <h3 className="font-semibold text-base truncate">{collection.name}</h3>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                      <p className="text-sm text-gray-500 dark:text-gray-400 text-ellipsis line-clamp-1">
                         {getBookmarkCount(collection.id)} {getBookmarkCount(collection.id) === 1 ? 'bookmark' : 'bookmarks'}
                       </p>
                     </div>
@@ -265,16 +254,9 @@ export default function CollectionsPage() {
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              if (!isDefaultCollection(collection.id)) {
-                                handleRename(collection);
-                              }
+                              handleRename(collection);
                             }}
-                            disabled={isDefaultCollection(collection.id)}
-                            className={`w-full flex items-center gap-3 px-4 py-3 transition-colors text-left ${
-                              isDefaultCollection(collection.id)
-                                ? 'opacity-50 cursor-not-allowed text-gray-400'
-                                : 'hover:bg-gray-50 dark:hover:bg-gray-700'
-                            }`}
+                            className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-left"
                           >
                             <Pencil className="w-4 h-4" />
                             <span>Rename</span>
@@ -282,16 +264,9 @@ export default function CollectionsPage() {
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              if (!isDefaultCollection(collection.id)) {
-                                handleDeleteClick(collection);
-                              }
+                              handleDeleteClick(collection);
                             }}
-                            disabled={isDefaultCollection(collection.id)}
-                            className={`w-full flex items-center gap-3 px-4 py-3 transition-colors text-left ${
-                              isDefaultCollection(collection.id)
-                                ? 'opacity-50 cursor-not-allowed text-gray-400'
-                                : 'hover:bg-gray-50 dark:hover:bg-gray-700 text-red-600 dark:text-red-400'
-                            }`}
+                            className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 text-red-600 dark:text-red-400 transition-colors text-left"
                           >
                             <Trash2 className="w-4 h-4" />
                             <span>Delete</span>

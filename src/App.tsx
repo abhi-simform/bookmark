@@ -53,7 +53,7 @@ function App() {
           <p className="text-lg font-medium text-gray-900 dark:text-gray-100">
             Syncing your bookmarks...
           </p>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+          <p className="text-sm text-gray-500 dark:text-gray-400 text-ellipsis line-clamp-1 line-clamp-1 mt-2">
             This will just take a moment
           </p>
         </div>
