@@ -18,13 +18,7 @@ export default function CollectionDetailPage() {
   const { collectionId } = useParams<{ collectionId: string }>();
   const navigate = useNavigate();
   const { collections } = useCollections();
-  const {
-    bookmarks,
-    loading,
-    toggleFavorite,
-    deleteBookmark,
-    refresh,
-  } = useBookmarks();
+  const { bookmarks, loading, toggleFavorite, deleteBookmark, refresh } = useBookmarks();
 
   const editSheet = useBottomSheet();
   const moveSheet = useBottomSheet();
@@ -32,14 +26,12 @@ export default function CollectionDetailPage() {
   const [filter, setFilter] = useState<'all' | 'favorite'>('all');
   const [selectedBookmark, setSelectedBookmark] = useState<Bookmark | null>(null);
 
-  const collection = collections.find((c) => c.id === collectionId);
+  const collection = collections.find(c => c.id === collectionId);
 
   // Filter bookmarks by collection
-  const collectionBookmarks = bookmarks.filter(
-    (bookmark) => bookmark.collectionId === collectionId
-  );
+  const collectionBookmarks = bookmarks.filter(bookmark => bookmark.collectionId === collectionId);
 
-  const filteredBookmarks = collectionBookmarks.filter((bookmark) => {
+  const filteredBookmarks = collectionBookmarks.filter(bookmark => {
     if (filter === 'favorite') return bookmark.isFavorite;
     return true;
   });
@@ -81,14 +73,17 @@ export default function CollectionDetailPage() {
       stats: {
         totalBookmarks: activeBookmarks.length,
         favoriteBookmarks: activeBookmarks.filter(b => b.isFavorite).length,
-      }
+      },
     };
 
     const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    const fileName = collection.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    const fileName = collection.name
+      .toLowerCase()
+      .replace(/\s+/g, '-')
+      .replace(/[^a-z0-9-]/g, '');
     link.download = `collection-${fileName}-${new Date().toISOString().split('T')[0]}.json`;
     document.body.appendChild(link);
     link.click();
@@ -122,19 +117,33 @@ export default function CollectionDetailPage() {
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
-          <div className={`w-10 h-10 rounded-lg ${collection.color ? getColorClass(collection.color) : 'bg-indigo-500'} flex items-center justify-center text-white flex-shrink-0`}>
+          <div
+            className={`w-10 h-10 rounded-lg ${collection.color ? getColorClass(collection.color) : 'bg-indigo-500'} flex items-center justify-center text-white flex-shrink-0`}
+          >
             {(() => {
               const Icon = getCollectionIcon(collection.icon);
               return <Icon className="w-5 h-5" />;
             })()}
           </div>
           <div className="flex-1">
-            <h1 className="text-xl font-semibold">{collection.name}</h1>
-            {collection.description && (
-              <p className="text-sm text-gray-500 dark:text-gray-400 text-ellipsis line-clamp-1">
+            <h1 className="text-md font-semibold">{collection.name}</h1>
+            {/* {collection.description && (
+              <p className="">
                 {collection.description}
               </p>
-            )}
+            )} */}
+            <div className="text-xs text-gray-500 dark:text-gray-400 text-ellipsis line-clamp-1">
+              <span>
+                {collectionBookmarks.length}{' '}
+                {collectionBookmarks.length === 1 ? 'bookmark' : 'bookmarks'}
+              </span>
+              {filter === 'favorite' && (
+                <span className="text-primary">
+                  {filteredBookmarks.length} favorite
+                  {filteredBookmarks.length === 1 ? '' : 's'}
+                </span>
+              )}
+            </div>
           </div>
           <button
             onClick={handleShareCollection}
@@ -158,7 +167,7 @@ export default function CollectionDetailPage() {
         </div>
 
         {/* Stats */}
-        <div className="mt-3 flex gap-4 text-sm text-gray-600 dark:text-gray-400">
+        {/* <div className="mt-3 flex gap-4 text-sm text-gray-600 dark:text-gray-400">
           <span>
             {collectionBookmarks.length}{' '}
             {collectionBookmarks.length === 1 ? 'bookmark' : 'bookmarks'}
@@ -169,12 +178,12 @@ export default function CollectionDetailPage() {
               {filteredBookmarks.length === 1 ? '' : 's'}
             </span>
           )}
-        </div>
+        </div> */}
       </header>
 
       {/* Bookmarks List */}
       <PullToRefresh onRefresh={refresh}>
-        <div className="p-4">
+        <>
           {loading ? (
             <div className="flex items-center justify-center py-12">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -185,9 +194,7 @@ export default function CollectionDetailPage() {
                 <span className="text-2xl">{collection.icon || '📚'}</span>
               </div>
               <h3 className="text-lg font-medium mb-2">
-                {filter === 'favorite'
-                  ? 'No favorite bookmarks'
-                  : 'No bookmarks yet'}
+                {filter === 'favorite' ? 'No favorite bookmarks' : 'No bookmarks yet'}
               </h3>
               <p className="text-sm text-gray-500 dark:text-gray-400 text-ellipsis line-clamp-1 mb-6 max-w-xs">
                 {filter === 'favorite'
@@ -196,42 +203,35 @@ export default function CollectionDetailPage() {
               </p>
             </div>
           ) : (
-            <BookmarkGrid
-              bookmarks={filteredBookmarks}
-              onToggleFavorite={toggleFavorite}
-              onDelete={deleteBookmark}
-              onEdit={handleEdit}
-              onMove={handleMove}
-            />
+            <>
+              {/* {collection.description && (
+                <p className="text-sm text-gray-500 dark:text-gray-400 text-ellipsis line-clamp-1">
+                  {collection.description}
+                </p>
+              )} */}
+              <BookmarkGrid
+                bookmarks={filteredBookmarks}
+                onToggleFavorite={toggleFavorite}
+                onDelete={deleteBookmark}
+                onEdit={handleEdit}
+                onMove={handleMove}
+              />
+            </>
           )}
-        </div>
+        </>
       </PullToRefresh>
 
       {/* Edit Bookmark Sheet */}
-      <BottomSheet
-        isOpen={editSheet.isOpen}
-        onClose={editSheet.close}
-        title="Edit Bookmark"
-      >
+      <BottomSheet isOpen={editSheet.isOpen} onClose={editSheet.close} title="Edit Bookmark">
         {selectedBookmark && (
-          <EditBookmarkSheet
-            bookmark={selectedBookmark}
-            onClose={editSheet.close}
-          />
+          <EditBookmarkSheet bookmark={selectedBookmark} onClose={editSheet.close} />
         )}
       </BottomSheet>
 
       {/* Move to Collection Sheet */}
-      <BottomSheet
-        isOpen={moveSheet.isOpen}
-        onClose={moveSheet.close}
-        title="Move to Collection"
-      >
+      <BottomSheet isOpen={moveSheet.isOpen} onClose={moveSheet.close} title="Move to Collection">
         {selectedBookmark && (
-          <MoveToCollectionSheet
-            bookmark={selectedBookmark}
-            onClose={moveSheet.close}
-          />
+          <MoveToCollectionSheet bookmark={selectedBookmark} onClose={moveSheet.close} />
         )}
       </BottomSheet>
     </div>

@@ -43,7 +43,7 @@ class ThumbnailService {
     try {
       // Get all bookmarks
       const bookmarks = await db.getAllBookmarks();
-      
+
       // Filter bookmarks without thumbnails OR favicons
       const bookmarksNeedingThumbnails = bookmarks.filter(
         (bookmark: Bookmark) => !bookmark.thumbnail || !bookmark.favicon
@@ -53,7 +53,7 @@ class ThumbnailService {
       const batchSize = 3;
       for (let i = 0; i < bookmarksNeedingThumbnails.length; i += batchSize) {
         const batch = bookmarksNeedingThumbnails.slice(i, i + batchSize);
-        
+
         await Promise.allSettled(
           batch.map((bookmark: Bookmark) => this.fetchAndUpdateThumbnail(bookmark))
         );
@@ -87,7 +87,7 @@ class ThumbnailService {
         };
 
         await db.updateBookmark(updatedBookmark);
-        
+
         // Notify subscribers about the update
         this.notifyThumbnailUpdate(updatedBookmark);
       }
@@ -119,7 +119,7 @@ class ThumbnailService {
    * Utility to delay execution
    */
   private delay(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   /**
@@ -138,7 +138,7 @@ class ThumbnailService {
     };
 
     const color = colors[platform || 'other'] || colors.other;
-    
+
     // Return a simple SVG as data URL
     const svg = `
       <svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
@@ -159,7 +159,7 @@ class ThumbnailService {
     try {
       const domain = new URL(url).hostname;
       const letter = domain.charAt(0).toUpperCase();
-      
+
       const svg = `
         <svg width="32" height="32" xmlns="http://www.w3.org/2000/svg">
           <rect width="32" height="32" fill="#6B7280" rx="4"/>
@@ -177,7 +177,7 @@ class ThumbnailService {
           <circle cx="16" cy="16" r="8" fill="white"/>
         </svg>
       `.trim();
-      
+
       return `data:image/svg+xml;base64,${btoa(svg)}`;
     }
   }

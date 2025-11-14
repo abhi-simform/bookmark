@@ -10,7 +10,9 @@ interface BookmarksContextType {
   bookmarks: Bookmark[];
   loading: boolean;
   error: string | null;
-  addBookmark: (bookmark: Omit<Bookmark, 'id' | 'createdAt' | 'lastModifiedAt'>) => Promise<Bookmark>;
+  addBookmark: (
+    bookmark: Omit<Bookmark, 'id' | 'createdAt' | 'lastModifiedAt'>
+  ) => Promise<Bookmark>;
   updateBookmark: (id: string, updates: Partial<Bookmark>) => Promise<Bookmark>;
   deleteBookmark: (id: string) => Promise<void>;
   toggleFavorite: (id: string) => Promise<void>;
@@ -69,10 +71,8 @@ export function BookmarksProvider({ children }: { children: ReactNode }) {
 
   // Subscribe to thumbnail updates to update UI in real-time
   useEffect(() => {
-    const unsubscribe = thumbnailService.onThumbnailUpdate((updatedBookmark) => {
-      setBookmarks((prev) => 
-        prev.map((b) => (b.id === updatedBookmark.id ? updatedBookmark : b))
-      );
+    const unsubscribe = thumbnailService.onThumbnailUpdate(updatedBookmark => {
+      setBookmarks(prev => prev.map(b => (b.id === updatedBookmark.id ? updatedBookmark : b)));
     });
 
     return unsubscribe;
@@ -87,15 +87,15 @@ export function BookmarksProvider({ children }: { children: ReactNode }) {
     };
 
     // Optimistic update - update UI immediately
-    setBookmarks((prev) => [newBookmark, ...prev]);
-    
+    setBookmarks(prev => [newBookmark, ...prev]);
+
     // Then persist to IndexedDB in the background
     db.addBookmark(newBookmark).catch(error => {
       console.error('Failed to save bookmark to IndexedDB:', error);
       // Rollback on error
-      setBookmarks((prev) => prev.filter(b => b.id !== newBookmark.id));
+      setBookmarks(prev => prev.filter(b => b.id !== newBookmark.id));
     });
-    
+
     // Sync to cloud in the background if user is logged in
     if (user) {
       syncService.syncBookmarksToCloud(user.id).catch(console.error);
@@ -103,29 +103,32 @@ export function BookmarksProvider({ children }: { children: ReactNode }) {
 
     // If thumbnail or favicon is missing, try to fetch it in background
     if (!newBookmark.thumbnail || !newBookmark.favicon) {
-      thumbnailService.fetchThumbnailForUrl(newBookmark.url).then(async ({ thumbnail, favicon }) => {
-        if (thumbnail || favicon) {
-          const updated: Bookmark = {
-            ...newBookmark,
-            thumbnail: thumbnail || newBookmark.thumbnail,
-            favicon: favicon || newBookmark.favicon,
-            lastModifiedAt: Date.now(),
-          };
-          
-          // Update in database and state
-          await db.updateBookmark(updated);
-          setBookmarks((prev) => prev.map((b) => (b.id === updated.id ? updated : b)));
-        }
-      }).catch(error => {
-        console.error('Failed to fetch thumbnail in background:', error);
-      });
+      thumbnailService
+        .fetchThumbnailForUrl(newBookmark.url)
+        .then(async ({ thumbnail, favicon }) => {
+          if (thumbnail || favicon) {
+            const updated: Bookmark = {
+              ...newBookmark,
+              thumbnail: thumbnail || newBookmark.thumbnail,
+              favicon: favicon || newBookmark.favicon,
+              lastModifiedAt: Date.now(),
+            };
+
+            // Update in database and state
+            await db.updateBookmark(updated);
+            setBookmarks(prev => prev.map(b => (b.id === updated.id ? updated : b)));
+          }
+        })
+        .catch(error => {
+          console.error('Failed to fetch thumbnail in background:', error);
+        });
     }
-    
+
     return newBookmark;
   };
 
   const updateBookmark = async (id: string, updates: Partial<Bookmark>) => {
-    const existing = bookmarks.find((b) => b.id === id);
+    const existing = bookmarks.find(b => b.id === id);
     if (!existing) throw new Error('Bookmark not found');
 
     const updated: Bookmark = {
@@ -135,38 +138,38 @@ export function BookmarksProvider({ children }: { children: ReactNode }) {
     };
 
     // Optimistic update - update UI immediately
-    setBookmarks((prev) => prev.map((b) => (b.id === id ? updated : b)));
-    
+    setBookmarks(prev => prev.map(b => (b.id === id ? updated : b)));
+
     // Then persist to IndexedDB in the background
     db.updateBookmark(updated).catch(error => {
       console.error('Failed to update bookmark in IndexedDB:', error);
       // Rollback on error
-      setBookmarks((prev) => prev.map((b) => (b.id === id ? existing : b)));
+      setBookmarks(prev => prev.map(b => (b.id === id ? existing : b)));
     });
-    
+
     // Sync to cloud in the background if user is logged in
     if (user) {
       syncService.syncBookmarksToCloud(user.id).catch(console.error);
     }
-    
+
     return updated;
   };
 
   const deleteBookmark = async (id: string) => {
-    const existing = bookmarks.find((b) => b.id === id);
-    
+    const existing = bookmarks.find(b => b.id === id);
+
     // Optimistic update - update UI immediately
-    setBookmarks((prev) => prev.filter((b) => b.id !== id));
-    
+    setBookmarks(prev => prev.filter(b => b.id !== id));
+
     // Then delete from IndexedDB in the background
     db.deleteBookmark(id).catch(error => {
       console.error('Failed to delete bookmark from IndexedDB:', error);
       // Rollback on error - restore the bookmark
       if (existing) {
-        setBookmarks((prev) => [...prev, existing]);
+        setBookmarks(prev => [...prev, existing]);
       }
     });
-    
+
     // Delete from cloud in the background if user is logged in
     if (user) {
       syncService.deleteBookmarkFromCloud(user.id, id).catch(console.error);
@@ -174,7 +177,7 @@ export function BookmarksProvider({ children }: { children: ReactNode }) {
   };
 
   const toggleFavorite = async (id: string) => {
-    const bookmark = bookmarks.find((b) => b.id === id);
+    const bookmark = bookmarks.find(b => b.id === id);
     if (bookmark) {
       await updateBookmark(id, { isFavorite: !bookmark.isFavorite });
     }
@@ -182,11 +185,11 @@ export function BookmarksProvider({ children }: { children: ReactNode }) {
 
   const batchDelete = async (ids: string[]) => {
     await db.batchDeleteBookmarks(ids);
-    setBookmarks((prev) => prev.filter((b) => !ids.includes(b.id)));
+    setBookmarks(prev => prev.filter(b => !ids.includes(b.id)));
   };
 
   const filterBookmarks = (filters: SearchFilters): Bookmark[] => {
-    return bookmarks.filter((bookmark) => {
+    return bookmarks.filter(bookmark => {
       if (filters.query) {
         const query = filters.query.toLowerCase();
         const matchesQuery =
@@ -205,7 +208,7 @@ export function BookmarksProvider({ children }: { children: ReactNode }) {
       }
 
       if (filters.tags && filters.tags.length > 0) {
-        const hasTag = filters.tags.some((tag) => bookmark.tags?.includes(tag));
+        const hasTag = filters.tags.some(tag => bookmark.tags?.includes(tag));
         if (!hasTag) return false;
       }
 

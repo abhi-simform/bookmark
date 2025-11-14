@@ -9,7 +9,7 @@ export default function ShareTargetPage() {
   const navigate = useNavigate();
   const { addBookmark } = useBookmarks();
   const { collections } = useCollections();
-  
+
   const [title, setTitle] = useState('');
   const [url, setUrl] = useState('');
   const [description, setDescription] = useState('');
@@ -60,7 +60,7 @@ export default function ShareTargetPage() {
         type: 'webpage',
         platform: 'other',
       });
-      
+
       // Navigate to home after saving
       navigate('/', { replace: true });
     } catch (error) {
@@ -97,9 +97,7 @@ export default function ShareTargetPage() {
       <div className="p-4 space-y-4">
         {/* URL Display */}
         <div className="bg-white rounded-lg p-4 shadow-sm">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            URL
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">URL</label>
           <div className="text-sm text-gray-900 break-all bg-gray-50 p-3 rounded border border-gray-200">
             {url || 'No URL provided'}
           </div>
@@ -114,7 +112,7 @@ export default function ShareTargetPage() {
             id="title"
             type="text"
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={e => setTitle(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
             placeholder="Enter bookmark title"
             disabled={isSaving}
@@ -129,7 +127,7 @@ export default function ShareTargetPage() {
           <textarea
             id="description"
             value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            onChange={e => setDescription(e.target.value)}
             rows={3}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
             placeholder="Add a description"
@@ -145,11 +143,11 @@ export default function ShareTargetPage() {
           <select
             id="collection"
             value={selectedCollection}
-            onChange={(e) => setSelectedCollection(e.target.value)}
+            onChange={e => setSelectedCollection(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
             disabled={isSaving}
           >
-            {collections.map((collection) => (
+            {collections.map(collection => (
               <option key={collection.id} value={collection.id}>
                 {collection.icon} {collection.name}
               </option>

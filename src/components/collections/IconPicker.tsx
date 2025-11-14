@@ -76,10 +76,10 @@ interface IconPickerProps {
 export function IconPicker({ selectedIcon, onSelectIcon }: IconPickerProps) {
   return (
     <div className="grid grid-cols-6 gap-2">
-      {(Object.keys(COLLECTION_ICONS) as CollectionIconName[]).map((iconKey) => {
+      {(Object.keys(COLLECTION_ICONS) as CollectionIconName[]).map(iconKey => {
         const { icon: Icon, label } = COLLECTION_ICONS[iconKey];
         const isSelected = selectedIcon === iconKey;
-        
+
         return (
           <button
             key={iconKey}
@@ -95,13 +95,11 @@ export function IconPicker({ selectedIcon, onSelectIcon }: IconPickerProps) {
             )}
             title={label}
           >
-            <Icon 
+            <Icon
               className={cn(
                 'w-6 h-6',
-                isSelected 
-                  ? 'text-primary' 
-                  : 'text-gray-600 dark:text-gray-400'
-              )} 
+                isSelected ? 'text-primary' : 'text-gray-600 dark:text-gray-400'
+              )}
             />
           </button>
         );

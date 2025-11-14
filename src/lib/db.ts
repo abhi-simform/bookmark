@@ -179,7 +179,7 @@ export async function deleteCollection(id: string): Promise<void> {
       deletedAt: Date.now(),
       lastModifiedAt: Date.now(),
     });
-    
+
     // Also soft delete all bookmarks in this collection
     const bookmarks = await getBookmarksByCollection(id);
     for (const bookmark of bookmarks) {
@@ -231,19 +231,13 @@ export async function deleteTag(id: string): Promise<void> {
 export async function batchDeleteBookmarks(ids: string[]): Promise<void> {
   const db = await getDB();
   const tx = db.transaction('bookmarks', 'readwrite');
-  await Promise.all([
-    ...ids.map((id) => tx.store.delete(id)),
-    tx.done,
-  ]);
+  await Promise.all([...ids.map(id => tx.store.delete(id)), tx.done]);
 }
 
 export async function batchUpdateBookmarks(bookmarks: Bookmark[]): Promise<void> {
   const db = await getDB();
   const tx = db.transaction('bookmarks', 'readwrite');
-  await Promise.all([
-    ...bookmarks.map((bookmark) => tx.store.put(bookmark)),
-    tx.done,
-  ]);
+  await Promise.all([...bookmarks.map(bookmark => tx.store.put(bookmark)), tx.done]);
 }
 
 // Clear all data (for user sign out)
@@ -261,24 +255,24 @@ export async function clearAllData(): Promise<void> {
 // Recycle bin operations
 export async function cleanupOldDeletedItems(): Promise<void> {
   const db = await getDB();
-  const sevenDaysAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
-  
+  const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+
   // Get all items from both stores
   const [bookmarks, collections] = await Promise.all([
     db.getAll('bookmarks'),
     db.getAll('collections'),
   ]);
-  
+
   // Delete bookmarks older than 7 days
   const oldBookmarks = bookmarks.filter(
     b => b.isDeleted && b.deletedAt && b.deletedAt < sevenDaysAgo
   );
-  
+
   // Delete collections older than 7 days
   const oldCollections = collections.filter(
     c => c.isDeleted && c.deletedAt && c.deletedAt < sevenDaysAgo
   );
-  
+
   // Perform deletions
   const tx = db.transaction(['bookmarks', 'collections'], 'readwrite');
   await Promise.all([
@@ -290,16 +284,16 @@ export async function cleanupOldDeletedItems(): Promise<void> {
 
 export async function emptyRecycleBin(): Promise<void> {
   const db = await getDB();
-  
+
   // Get all deleted items
   const [bookmarks, collections] = await Promise.all([
     db.getAll('bookmarks'),
     db.getAll('collections'),
   ]);
-  
+
   const deletedBookmarks = bookmarks.filter(b => b.isDeleted);
   const deletedCollections = collections.filter(c => c.isDeleted);
-  
+
   // Perform deletions
   const tx = db.transaction(['bookmarks', 'collections'], 'readwrite');
   await Promise.all([

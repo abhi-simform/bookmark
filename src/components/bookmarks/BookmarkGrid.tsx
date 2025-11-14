@@ -24,12 +24,7 @@ export function BookmarkGrid({
     return (
       <div className="flex flex-col items-center justify-center py-12 px-4">
         <div className="text-gray-400 dark:text-gray-600 mb-4">
-          <svg
-            className="w-16 h-16 mx-auto"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
+          <svg className="w-16 h-16 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -48,7 +43,7 @@ export function BookmarkGrid({
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
-      {bookmarks.map((bookmark) => (
+      {bookmarks.map(bookmark => (
         <BookmarkCard
           key={bookmark.id}
           bookmark={bookmark}

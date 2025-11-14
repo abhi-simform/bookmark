@@ -8,10 +8,11 @@ export function useInstallPrompt() {
   useEffect(() => {
     // Check if already installed
     const checkInstalled = () => {
-      const standalone = window.matchMedia('(display-mode: standalone)').matches 
-        || (window.navigator as any).standalone 
-        || document.referrer.includes('android-app://');
-      
+      const standalone =
+        window.matchMedia('(display-mode: standalone)').matches ||
+        (window.navigator as any).standalone ||
+        document.referrer.includes('android-app://');
+
       setIsInstalled(standalone);
       return standalone;
     };
@@ -46,7 +47,7 @@ export function useInstallPrompt() {
 
     await deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
-    
+
     setDeferredPrompt(null);
     setIsInstallable(false);
 

@@ -1,11 +1,11 @@
 export type BookmarkType = 'article' | 'video' | 'social' | 'webpage';
 
-export type BookmarkPlatform = 
-  | 'youtube' 
-  | 'twitter' 
-  | 'github' 
-  | 'medium' 
-  | 'reddit' 
+export type BookmarkPlatform =
+  | 'youtube'
+  | 'twitter'
+  | 'github'
+  | 'medium'
+  | 'reddit'
   | 'linkedin'
   | 'other';
 

@@ -1,5 +1,12 @@
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Trash2, RefreshCw, AlertTriangle, Folder, Bookmark as BookmarkIcon } from 'lucide-react';
+import {
+  ArrowLeft,
+  Trash2,
+  RefreshCw,
+  AlertTriangle,
+  Folder,
+  Bookmark as BookmarkIcon,
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import * as db from '@/lib/db';
 import { syncService } from '@/lib/sync';
@@ -37,12 +44,12 @@ export default function RecycleBinPage() {
   const handleRestoreBookmark = async (id: string) => {
     try {
       await db.restoreBookmark(id);
-      
+
       // Sync to cloud if user is logged in
       if (user) {
         await syncService.syncBookmarksToCloud(user.id);
       }
-      
+
       setDeletedBookmarks(prev => prev.filter(b => b.id !== id));
     } catch (error) {
       console.error('Error restoring bookmark:', error);
@@ -52,12 +59,12 @@ export default function RecycleBinPage() {
   const handleRestoreCollection = async (id: string) => {
     try {
       await db.restoreCollection(id);
-      
+
       // Sync to cloud if user is logged in
       if (user) {
         await syncService.syncCollectionsToCloud(user.id);
       }
-      
+
       setDeletedCollections(prev => prev.filter(c => c.id !== id));
     } catch (error) {
       console.error('Error restoring collection:', error);
@@ -65,18 +72,22 @@ export default function RecycleBinPage() {
   };
 
   const handlePermanentDeleteBookmark = async (id: string) => {
-    if (!confirm('Are you sure you want to permanently delete this bookmark? This action cannot be undone.')) {
+    if (
+      !confirm(
+        'Are you sure you want to permanently delete this bookmark? This action cannot be undone.'
+      )
+    ) {
       return;
     }
 
     try {
       await db.permanentlyDeleteBookmark(id);
-      
+
       // Delete from cloud if user is logged in
       if (user) {
         await syncService.deleteBookmarkFromCloud(user.id, id);
       }
-      
+
       setDeletedBookmarks(prev => prev.filter(b => b.id !== id));
     } catch (error) {
       console.error('Error permanently deleting bookmark:', error);
@@ -84,18 +95,22 @@ export default function RecycleBinPage() {
   };
 
   const handlePermanentDeleteCollection = async (id: string) => {
-    if (!confirm('Are you sure you want to permanently delete this collection? This action cannot be undone.')) {
+    if (
+      !confirm(
+        'Are you sure you want to permanently delete this collection? This action cannot be undone.'
+      )
+    ) {
       return;
     }
 
     try {
       await db.permanentlyDeleteCollection(id);
-      
+
       // Delete from cloud if user is logged in
       if (user) {
         await syncService.deleteCollectionFromCloud(user.id, id);
       }
-      
+
       setDeletedCollections(prev => prev.filter(c => c.id !== id));
     } catch (error) {
       console.error('Error permanently deleting collection:', error);
@@ -103,13 +118,17 @@ export default function RecycleBinPage() {
   };
 
   const handleEmptyRecycleBin = async () => {
-    if (!confirm('Are you sure you want to permanently delete all items in the recycle bin? This action cannot be undone.')) {
+    if (
+      !confirm(
+        'Are you sure you want to permanently delete all items in the recycle bin? This action cannot be undone.'
+      )
+    ) {
       return;
     }
 
     try {
       await db.emptyRecycleBin();
-      
+
       // Sync to cloud if user is logged in
       if (user) {
         await Promise.all([
@@ -117,7 +136,7 @@ export default function RecycleBinPage() {
           syncService.syncCollectionsToCloud(user.id),
         ]);
       }
-      
+
       setDeletedBookmarks([]);
       setDeletedCollections([]);
     } catch (error) {
@@ -147,9 +166,7 @@ export default function RecycleBinPage() {
                 <ArrowLeft className="w-5 h-5 text-gray-700 dark:text-gray-300" />
               </button>
               <div>
-                <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
-                  Recycle Bin
-                </h1>
+                <h1 className="text-xl font-semibold text-gray-900 dark:text-white">Recycle Bin</h1>
                 <p className="text-sm text-gray-500 dark:text-gray-400 text-ellipsis line-clamp-1">
                   Items will be automatically deleted after 7 days
                 </p>
@@ -206,9 +223,7 @@ export default function RecycleBinPage() {
             <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
               Recycle bin is empty
             </h3>
-            <p className="text-gray-500 dark:text-gray-400">
-              Deleted items will appear here
-            </p>
+            <p className="text-gray-500 dark:text-gray-400">Deleted items will appear here</p>
           </div>
         ) : (
           <>
@@ -230,7 +245,7 @@ export default function RecycleBinPage() {
             {/* Bookmarks Tab */}
             {activeTab === 'bookmarks' && (
               <div className="space-y-3">
-                {deletedBookmarks.map((bookmark) => (
+                {deletedBookmarks.map(bookmark => (
                   <div
                     key={bookmark.id}
                     className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4"
@@ -273,7 +288,7 @@ export default function RecycleBinPage() {
             {/* Collections Tab */}
             {activeTab === 'collections' && (
               <div className="space-y-3">
-                {deletedCollections.map((collection) => (
+                {deletedCollections.map(collection => (
                   <div
                     key={collection.id}
                     className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4"

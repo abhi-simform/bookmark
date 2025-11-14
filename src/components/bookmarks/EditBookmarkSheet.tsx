@@ -35,8 +35,8 @@ export default function EditBookmarkSheet({ bookmark, onClose }: EditBookmarkShe
         collectionId: collectionId,
         tags: tags
           .split(',')
-          .map((tag) => tag.trim())
-          .filter((tag) => tag.length > 0),
+          .map(tag => tag.trim())
+          .filter(tag => tag.length > 0),
       });
 
       hapticFeedback.success();
@@ -60,7 +60,7 @@ export default function EditBookmarkSheet({ bookmark, onClose }: EditBookmarkShe
           id="edit-url"
           type="url"
           value={url}
-          onChange={(e) => setUrl(e.target.value)}
+          onChange={e => setUrl(e.target.value)}
           placeholder="https://example.com"
           className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-base focus:ring-2 focus:ring-primary focus:border-transparent"
           disabled={isLoading}
@@ -77,7 +77,7 @@ export default function EditBookmarkSheet({ bookmark, onClose }: EditBookmarkShe
           id="edit-title"
           type="text"
           value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          onChange={e => setTitle(e.target.value)}
           placeholder="Bookmark title"
           className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-base focus:ring-2 focus:ring-primary focus:border-transparent"
           disabled={isLoading}
@@ -93,7 +93,7 @@ export default function EditBookmarkSheet({ bookmark, onClose }: EditBookmarkShe
         <textarea
           id="edit-description"
           value={description}
-          onChange={(e) => setDescription(e.target.value)}
+          onChange={e => setDescription(e.target.value)}
           placeholder="Optional description"
           rows={3}
           className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-base focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
@@ -109,13 +109,13 @@ export default function EditBookmarkSheet({ bookmark, onClose }: EditBookmarkShe
         <select
           id="edit-collection"
           value={collectionId}
-          onChange={(e) => setCollectionId(e.target.value)}
+          onChange={e => setCollectionId(e.target.value)}
           className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-base focus:ring-2 focus:ring-primary focus:border-transparent"
           disabled={isLoading}
           required
         >
           <option value="">Select a collection</option>
-          {collections.map((collection) => (
+          {collections.map(collection => (
             <option key={collection.id} value={collection.id}>
               {collection.name}
             </option>
@@ -132,14 +132,12 @@ export default function EditBookmarkSheet({ bookmark, onClose }: EditBookmarkShe
           id="edit-tags"
           type="text"
           value={tags}
-          onChange={(e) => setTags(e.target.value)}
+          onChange={e => setTags(e.target.value)}
           placeholder="tag1, tag2, tag3"
           className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-base focus:ring-2 focus:ring-primary focus:border-transparent"
           disabled={isLoading}
         />
-        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-          Separate tags with commas
-        </p>
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Separate tags with commas</p>
       </div>
 
       {/* Submit Button */}

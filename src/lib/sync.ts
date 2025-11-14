@@ -90,7 +90,9 @@ export class SyncService {
                 icon: collection.icon,
                 order: collection.order,
                 is_deleted: collection.isDeleted || false,
-                deleted_at: collection.deletedAt ? new Date(collection.deletedAt).toISOString() : null,
+                deleted_at: collection.deletedAt
+                  ? new Date(collection.deletedAt).toISOString()
+                  : null,
                 last_modified_at: new Date(collection.lastModifiedAt).toISOString(),
               })
               .eq('id', collection.id)
@@ -111,7 +113,7 @@ export class SyncService {
             created_at: new Date(collection.createdAt).toISOString(),
             last_modified_at: new Date(collection.lastModifiedAt).toISOString(),
           });
-          
+
           if (insertError) {
             console.error('Error inserting collection:', collection.id, insertError);
             throw insertError;
@@ -145,7 +147,7 @@ export class SyncService {
 
     for (const cloudCol of cloudCollections) {
       const local = localMap.get(cloudCol.id);
-      
+
       if (!local) {
         // Add new collection from cloud (including soft-deleted ones)
         await dbInstance.put('collections', {
@@ -235,9 +237,9 @@ export class SyncService {
             created_at: new Date(bookmark.createdAt).toISOString(),
             last_modified_at: new Date(bookmark.lastModifiedAt).toISOString(),
           };
-          
+
           const { error: insertError } = await supabase.from('bookmarks').insert(bookmarkData);
-          
+
           if (insertError) {
             console.error('Error inserting bookmark:', bookmark.id, insertError);
             throw insertError;
@@ -271,7 +273,7 @@ export class SyncService {
 
     for (const cloudBm of cloudBookmarks) {
       const local = localMap.get(cloudBm.id);
-      
+
       if (!local) {
         // Add new bookmark from cloud (including soft-deleted ones)
         await dbInstance.put('bookmarks', {
@@ -332,7 +334,7 @@ export class SyncService {
       await this.syncBookmarksToCloud(userId);
 
       this.updateLastSync();
-      
+
       // Notify subscribers that sync completed
       this.notifySyncComplete();
     } catch (error) {
@@ -358,7 +360,7 @@ export class SyncService {
       await this.syncBookmarksToCloud(userId);
 
       this.updateLastSync();
-      
+
       // Notify subscribers that sync completed
       this.notifySyncComplete();
     } catch (error) {
@@ -372,11 +374,7 @@ export class SyncService {
   // Delete bookmark from cloud
   async deleteBookmarkFromCloud(userId: string, bookmarkId: string): Promise<void> {
     try {
-      await supabase
-        .from('bookmarks')
-        .delete()
-        .eq('id', bookmarkId)
-        .eq('user_id', userId);
+      await supabase.from('bookmarks').delete().eq('id', bookmarkId).eq('user_id', userId);
     } catch (error) {
       console.error('Error deleting bookmark from cloud:', error);
     }

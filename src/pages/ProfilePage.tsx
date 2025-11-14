@@ -1,5 +1,15 @@
 import { useState, useRef } from 'react';
-import { Edit2, Download, Upload, LogOut, X, Check, RefreshCw, Cloud, Smartphone } from 'lucide-react';
+import {
+  Edit2,
+  Download,
+  Upload,
+  LogOut,
+  X,
+  Check,
+  RefreshCw,
+  Cloud,
+  Smartphone,
+} from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useBookmarks } from '@/hooks/useBookmarks';
 import { useCollections } from '@/hooks/useCollections';
@@ -17,17 +27,17 @@ export default function ProfilePage() {
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { isInstallable, isInstalled, promptInstall } = useInstallPrompt();
-  
+
   const [userName, setUserName] = useState(user?.user_metadata?.name || '');
   const [editNameValue, setEditNameValue] = useState(userName);
   const [syncing, setSyncing] = useState(false);
-  
+
   const editNameSheet = useBottomSheet();
 
   // Manual sync trigger
   const handleManualSync = async () => {
     if (!user) return;
-    
+
     setSyncing(true);
     try {
       await syncService.fullSync(user.id);
@@ -43,7 +53,12 @@ export default function ProfilePage() {
   // Get user initials for avatar
   const getInitials = () => {
     if (userName) {
-      return userName.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2);
+      return userName
+        .split(' ')
+        .map((n: string) => n[0])
+        .join('')
+        .toUpperCase()
+        .slice(0, 2);
     }
     if (user?.email) {
       return user.email[0].toUpperCase();
@@ -80,7 +95,7 @@ export default function ProfilePage() {
         totalBookmarks: activeBookmarks.length,
         totalCollections: activeCollections.length,
         favoriteBookmarks: activeBookmarks.filter(b => b.isFavorite).length,
-      }
+      },
     };
 
     const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
@@ -120,7 +135,7 @@ export default function ProfilePage() {
       if (isCollectionShare) {
         // Import the shared collection
         const sharedCollection = data.collection;
-        
+
         try {
           const newCollection = await addCollection({
             name: sharedCollection.name,
@@ -144,7 +159,9 @@ export default function ProfilePage() {
               errors.push(`Collection "${sharedCollection.name}": ${error.message}`);
             }
           } else {
-            errors.push(`Collection "${sharedCollection.name}": ${error instanceof Error ? error.message : 'Unknown error'}`);
+            errors.push(
+              `Collection "${sharedCollection.name}": ${error instanceof Error ? error.message : 'Unknown error'}`
+            );
           }
         }
       } else {
@@ -177,7 +194,9 @@ export default function ProfilePage() {
               if (error instanceof Error && error.message.includes('already exists')) {
                 skippedCollections++;
               } else {
-                errors.push(`Collection "${collection.name}": ${error instanceof Error ? error.message : 'Unknown error'}`);
+                errors.push(
+                  `Collection "${collection.name}": ${error instanceof Error ? error.message : 'Unknown error'}`
+                );
               }
             }
           }
@@ -188,7 +207,7 @@ export default function ProfilePage() {
       if (data.bookmarks && Array.isArray(data.bookmarks)) {
         // Get the default collection as fallback
         const defaultCollection = collections.find(c => c.name === 'Miscellaneous');
-        
+
         for (const bookmark of data.bookmarks) {
           // Skip soft-deleted bookmarks
           if (bookmark.isDeleted) {
@@ -198,7 +217,7 @@ export default function ProfilePage() {
 
           // Determine collection ID
           let targetCollectionId = bookmark.collectionId;
-          
+
           // If importing a shared collection, use the new collection ID
           if (isCollectionShare && newCollectionId) {
             targetCollectionId = newCollectionId;
@@ -220,16 +239,16 @@ export default function ProfilePage() {
             });
             importedBookmarks++;
           } catch (error) {
-            errors.push(`Bookmark "${bookmark.title}": ${error instanceof Error ? error.message : 'Unknown error'}`);
+            errors.push(
+              `Bookmark "${bookmark.title}": ${error instanceof Error ? error.message : 'Unknown error'}`
+            );
           }
         }
       }
 
       // Show detailed results
-      let message = isCollectionShare 
-        ? `Collection imported!\n\n` 
-        : `Import completed!\n\n`;
-      
+      let message = isCollectionShare ? `Collection imported!\n\n` : `Import completed!\n\n`;
+
       if (isCollectionShare) {
         message += `📁 Collection: ${data.collection.name}\n`;
         message += `✅ Bookmarks imported: ${importedBookmarks}\n`;
@@ -240,14 +259,14 @@ export default function ProfilePage() {
         message += `✅ Collections imported: ${importedCollections}\n`;
         message += `✅ Bookmarks imported: ${importedBookmarks}\n`;
       }
-      
+
       if (skippedCollections > 0) {
         message += `⏭️  Collections skipped: ${skippedCollections}\n`;
       }
       if (skippedBookmarks > 0) {
         message += `⏭️  Bookmarks skipped: ${skippedBookmarks}\n`;
       }
-      
+
       if (errors.length > 0) {
         message += `\n⚠️  Errors (${errors.length}):\n${errors.slice(0, 5).join('\n')}`;
         if (errors.length > 5) {
@@ -258,7 +277,9 @@ export default function ProfilePage() {
       alert(message);
     } catch (error) {
       console.error('Import error:', error);
-      alert(`Failed to import: ${error instanceof Error ? error.message : 'Please check the file format.'}`);
+      alert(
+        `Failed to import: ${error instanceof Error ? error.message : 'Please check the file format.'}`
+      );
     }
 
     // Reset file input
@@ -279,8 +300,8 @@ export default function ProfilePage() {
       {/* Content */}
       <div className="flex-1 overflow-y-auto pb-safe-bottom">
         {/* User info */}
-        <div className="bg-white dark:bg-gray-900 p-6 border-b border-gray-200 dark:border-gray-800">
-          <div className="flex items-center gap-4 mb-4">
+        <div className="bg-white dark:bg-gray-900 px-6 py-2 border-b border-gray-200 dark:border-gray-800">
+          <div className="flex items-center gap-4">
             <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center text-primary-foreground text-2xl font-bold">
               {getInitials()}
             </div>
@@ -343,7 +364,9 @@ export default function ProfilePage() {
 
           {/* Theme Toggle Section */}
           <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
-            <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Appearance</h3>
+            <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+              Appearance
+            </h3>
             <ThemeToggle />
           </div>
 
@@ -367,7 +390,16 @@ export default function ProfilePage() {
             onClick={() => navigate('/recycle-bin')}
             className="w-full flex items-center gap-3 p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 active:scale-[0.98] transition-transform"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-gray-600 dark:text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-5 h-5 text-gray-600 dark:text-gray-400"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d="M3 6h18"></path>
               <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
               <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
@@ -380,7 +412,9 @@ export default function ProfilePage() {
             className="w-full flex items-center gap-3 p-4 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800 active:scale-[0.98] transition-transform"
           >
             <LogOut className="w-5 h-5 text-red-600 dark:text-red-400" />
-            <span className="flex-1 text-left font-medium text-red-600 dark:text-red-400">Sign Out</span>
+            <span className="flex-1 text-left font-medium text-red-600 dark:text-red-400">
+              Sign Out
+            </span>
           </button>
         </div>
 
@@ -430,7 +464,7 @@ export default function ProfilePage() {
               id="name"
               type="text"
               value={editNameValue}
-              onChange={(e) => setEditNameValue(e.target.value)}
+              onChange={e => setEditNameValue(e.target.value)}
               placeholder="Enter your name"
               className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-base focus:ring-2 focus:ring-primary focus:border-transparent"
               autoFocus

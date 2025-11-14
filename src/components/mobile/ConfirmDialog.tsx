@@ -31,16 +31,13 @@ export function ConfirmDialog({
   return (
     <>
       {/* Backdrop */}
-      <div
-        className="fixed inset-0 bg-black/50 z-50 animate-fade-in"
-        onClick={onClose}
-      />
+      <div className="fixed inset-0 bg-black/50 z-50 animate-fade-in" onClick={onClose} />
 
       {/* Dialog */}
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
         <div
           className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl max-w-sm w-full p-6 pointer-events-auto animate-scale-in"
-          onClick={(e) => e.stopPropagation()}
+          onClick={e => e.stopPropagation()}
         >
           {/* Icon */}
           <div
@@ -48,8 +45,8 @@ export function ConfirmDialog({
               variant === 'danger'
                 ? 'bg-red-100 dark:bg-red-900/30'
                 : variant === 'warning'
-                ? 'bg-yellow-100 dark:bg-yellow-900/30'
-                : 'bg-blue-100 dark:bg-blue-900/30'
+                  ? 'bg-yellow-100 dark:bg-yellow-900/30'
+                  : 'bg-blue-100 dark:bg-blue-900/30'
             }`}
           >
             <AlertTriangle
@@ -57,8 +54,8 @@ export function ConfirmDialog({
                 variant === 'danger'
                   ? 'text-red-600 dark:text-red-400'
                   : variant === 'warning'
-                  ? 'text-yellow-600 dark:text-yellow-400'
-                  : 'text-blue-600 dark:text-blue-400'
+                    ? 'text-yellow-600 dark:text-yellow-400'
+                    : 'text-blue-600 dark:text-blue-400'
               }`}
             />
           </div>
@@ -81,8 +78,8 @@ export function ConfirmDialog({
                 variant === 'danger'
                   ? 'bg-red-600 hover:bg-red-700 text-white'
                   : variant === 'warning'
-                  ? 'bg-yellow-600 hover:bg-yellow-700 text-white'
-                  : 'bg-primary hover:bg-primary/90 text-primary-foreground'
+                    ? 'bg-yellow-600 hover:bg-yellow-700 text-white'
+                    : 'bg-primary hover:bg-primary/90 text-primary-foreground'
               }`}
             >
               {confirmText}

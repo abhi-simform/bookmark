@@ -74,9 +74,9 @@ function App() {
 
   // If authenticated, show main app
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 pb-16">
+    <>
       {/* Main Content */}
-      <main className="h-full">
+      <main className="h-[calc(100dvh-65px)] bg-gray-50 dark:bg-gray-950">
         <Routes>
           <Route
             path="/"
@@ -142,10 +142,7 @@ function App() {
       <BottomNav />
 
       {/* Floating Action Button */}
-      <FAB
-        onClick={addBookmarkSheet.open}
-        label="Add Bookmark"
-      />
+      <FAB onClick={addBookmarkSheet.open} label="Add Bookmark" />
 
       {/* Add Bookmark Bottom Sheet */}
       <BottomSheet
@@ -158,7 +155,7 @@ function App() {
 
       {/* PWA Install Prompt */}
       <InstallPrompt />
-    </div>
+    </>
   );
 }
 

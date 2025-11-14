@@ -37,7 +37,7 @@ export default function SignUpPage() {
       if (error) {
         // Provide more helpful error messages
         let errorMessage = error.message;
-        
+
         if (error.message.includes('500')) {
           errorMessage = 'Server error. Please check Supabase configuration or try again later.';
         } else if (error.message.includes('User already registered')) {
@@ -45,7 +45,7 @@ export default function SignUpPage() {
         } else if (error.message.includes('Email')) {
           errorMessage = 'Invalid email address. Please check and try again.';
         }
-        
+
         setError(errorMessage);
         setLoading(false);
       } else {
@@ -93,9 +93,7 @@ export default function SignUpPage() {
             <Bookmark className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-2xl font-bold mb-2">Create Account</h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            Start organizing your bookmarks today
-          </p>
+          <p className="text-gray-600 dark:text-gray-400">Start organizing your bookmarks today</p>
         </div>
 
         {/* Sign Up Form */}
@@ -117,7 +115,7 @@ export default function SignUpPage() {
                 id="email"
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={e => setEmail(e.target.value)}
                 placeholder="you@example.com"
                 className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-base focus:ring-2 focus:ring-primary focus:border-transparent"
                 required
@@ -134,7 +132,7 @@ export default function SignUpPage() {
                 id="password"
                 type="password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={e => setPassword(e.target.value)}
                 placeholder="••••••••"
                 className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-base focus:ring-2 focus:ring-primary focus:border-transparent"
                 required
@@ -155,7 +153,7 @@ export default function SignUpPage() {
                 id="confirmPassword"
                 type="password"
                 value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                onChange={e => setConfirmPassword(e.target.value)}
                 placeholder="••••••••"
                 className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-base focus:ring-2 focus:ring-primary focus:border-transparent"
                 required

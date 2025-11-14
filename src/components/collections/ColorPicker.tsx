@@ -29,7 +29,7 @@ interface ColorPickerProps {
 export function ColorPicker({ selectedColor, onColorSelect }: ColorPickerProps) {
   return (
     <div className="grid grid-cols-6 gap-2">
-      {COLLECTION_COLORS.map((color) => (
+      {COLLECTION_COLORS.map(color => (
         <button
           key={color.value}
           type="button"

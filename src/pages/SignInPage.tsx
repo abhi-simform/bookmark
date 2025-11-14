@@ -35,9 +35,7 @@ export default function SignInPage() {
             <Bookmark className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-2xl font-bold mb-2">Welcome Back</h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            Sign in to access your bookmarks
-          </p>
+          <p className="text-gray-600 dark:text-gray-400">Sign in to access your bookmarks</p>
         </div>
 
         {/* Sign In Form */}
@@ -59,7 +57,7 @@ export default function SignInPage() {
                 id="email"
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={e => setEmail(e.target.value)}
                 placeholder="you@example.com"
                 className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-base focus:ring-2 focus:ring-primary focus:border-transparent"
                 required
@@ -76,7 +74,7 @@ export default function SignInPage() {
                 id="password"
                 type="password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={e => setPassword(e.target.value)}
                 placeholder="••••••••"
                 className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-base focus:ring-2 focus:ring-primary focus:border-transparent"
                 required
@@ -87,10 +85,7 @@ export default function SignInPage() {
 
             {/* Forgot Password Link */}
             <div className="text-right">
-              <Link
-                to="/forgot-password"
-                className="text-sm text-primary hover:underline"
-              >
+              <Link to="/forgot-password" className="text-sm text-primary hover:underline">
                 Forgot password?
               </Link>
             </div>

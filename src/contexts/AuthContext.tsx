@@ -31,12 +31,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Subscribe to sync completion to update syncing state and fetch thumbnails
     const unsubscribe = syncService.onSyncComplete(() => {
       setSyncing(false);
-      
+
       // Wait a bit for the UI to update with synced bookmarks before fetching thumbnails
       setTimeout(() => {
         supabase.auth.getUser().then(({ data }) => {
           if (data.user) {
-            thumbnailService.fetchMissingThumbnails(data.user.id).catch((error) => {
+            thumbnailService.fetchMissingThumbnails(data.user.id).catch(error => {
               console.error('Background thumbnail fetch failed:', error);
             });
           }
@@ -49,12 +49,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
-      
+
       // If user is already logged in (e.g., page refresh), sync from cloud
       if (session?.user && !hasPerformedInitialSync) {
         hasPerformedInitialSync = true;
         setSyncing(true);
-        syncService.initialSync(session.user.id).catch((error) => {
+        syncService.initialSync(session.user.id).catch(error => {
           console.error('Initial sync failed:', error);
           setSyncing(false);
         });
@@ -68,17 +68,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
-      
+
       // ONLY sync when user signs in AND we haven't synced yet
       if (event === 'SIGNED_IN' && session?.user && !hasPerformedInitialSync) {
         hasPerformedInitialSync = true;
         setSyncing(true);
-        syncService.initialSync(session.user.id).catch((error) => {
+        syncService.initialSync(session.user.id).catch(error => {
           console.error('Sign in sync failed:', error);
           setSyncing(false);
         });
       }
-      
+
       // Clear local data on sign out
       if (event === 'SIGNED_OUT') {
         hasPerformedInitialSync = false; // Reset flag on logout

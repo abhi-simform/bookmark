@@ -52,7 +52,7 @@ export default function MoveToCollectionSheet({ bookmark, onClose }: MoveToColle
 
       {/* Collections List */}
       <div className="space-y-2 max-h-96 overflow-y-auto">
-        {collections.map((collection) => {
+        {collections.map(collection => {
           const isCurrentCollection = collection.id === bookmark.collectionId;
           const isSelected = collection.id === selectedCollectionId;
 

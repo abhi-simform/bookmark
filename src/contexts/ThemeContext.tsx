@@ -22,7 +22,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const root = window.document.documentElement;
-    
+
     const applyTheme = (isDark: boolean) => {
       root.classList.remove('light', 'dark');
       root.classList.add(isDark ? 'dark' : 'light');

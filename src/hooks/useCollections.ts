@@ -29,7 +29,7 @@ export function useCollections() {
     try {
       const data = await db.getAllCollections();
       let updated = false;
-      
+
       for (const collection of data) {
         if (!collection.icon) {
           await db.updateCollection({
@@ -40,7 +40,7 @@ export function useCollections() {
           updated = true;
         }
       }
-      
+
       if (updated && user) {
         // Sync the icon updates to cloud
         await syncService.syncCollectionsToCloud(user.id);
@@ -84,7 +84,7 @@ export function useCollections() {
     const existingCollection = collections.find(
       c => c.name.toLowerCase() === collection.name.toLowerCase()
     );
-    
+
     if (existingCollection) {
       throw new Error(`Collection "${collection.name}" already exists`);
     }
@@ -97,25 +97,25 @@ export function useCollections() {
     };
 
     // Optimistic update - update UI immediately
-    setCollections((prev) => [...prev, newCollection]);
-    
+    setCollections(prev => [...prev, newCollection]);
+
     // Then persist to IndexedDB in the background
     db.addCollection(newCollection).catch(error => {
       console.error('Failed to save collection to IndexedDB:', error);
       // Rollback on error
-      setCollections((prev) => prev.filter(c => c.id !== newCollection.id));
+      setCollections(prev => prev.filter(c => c.id !== newCollection.id));
     });
-    
+
     // Sync to cloud in the background if user is logged in
     if (user) {
       syncService.syncCollectionsToCloud(user.id).catch(console.error);
     }
-    
+
     return newCollection;
   };
 
   const updateCollection = async (id: string, updates: Partial<Collection>) => {
-    const existing = collections.find((c) => c.id === id);
+    const existing = collections.find(c => c.id === id);
     if (!existing) throw new Error('Collection not found');
 
     const updated: Collection = {
@@ -125,32 +125,32 @@ export function useCollections() {
     };
 
     // Optimistic update - update UI immediately
-    setCollections((prev) => prev.map((c) => (c.id === id ? updated : c)));
-    
+    setCollections(prev => prev.map(c => (c.id === id ? updated : c)));
+
     // Then persist to IndexedDB in the background
     db.updateCollection(updated).catch(error => {
       console.error('Failed to update collection in IndexedDB:', error);
       // Rollback on error
-      setCollections((prev) => prev.map((c) => (c.id === id ? existing : c)));
+      setCollections(prev => prev.map(c => (c.id === id ? existing : c)));
     });
-    
+
     // Sync to cloud in the background if user is logged in
     if (user) {
       syncService.syncCollectionsToCloud(user.id).catch(console.error);
     }
-    
+
     return updated;
   };
 
   const deleteCollection = async (id: string) => {
-    const existing = collections.find((c) => c.id === id);
-    
+    const existing = collections.find(c => c.id === id);
+
     // Soft delete the collection locally (this also soft deletes bookmarks)
     await db.deleteCollection(id);
-    
+
     // Optimistically mark as deleted in UI
-    setCollections((prev) => prev.filter((c) => c.id !== id));
-    
+    setCollections(prev => prev.filter(c => c.id !== id));
+
     // Sync the soft delete to cloud
     if (user) {
       // Use deleteCollectionFromCloud which now does soft delete
@@ -158,7 +158,7 @@ export function useCollections() {
         console.error('Failed to sync collection deletion to cloud:', error);
         // Note: Local soft delete already happened, so we don't rollback
       });
-      
+
       // Also sync any soft-deleted bookmarks
       const bookmarksInCollection = await db.getBookmarksByCollection(id);
       for (const bookmark of bookmarksInCollection) {
@@ -168,21 +168,19 @@ export function useCollections() {
   };
 
   const getCollectionTree = (): Collection[] => {
-    const rootCollections = collections.filter((c) => !c.parentId);
+    const rootCollections = collections.filter(c => !c.parentId);
     return rootCollections.sort((a, b) => a.order - b.order);
   };
 
   const getChildCollections = (parentId: string): Collection[] => {
-    return collections
-      .filter((c) => c.parentId === parentId)
-      .sort((a, b) => a.order - b.order);
+    return collections.filter(c => c.parentId === parentId).sort((a, b) => a.order - b.order);
   };
 
   const cleanupDuplicates = async () => {
     // Find duplicate "All" or "Miscellaneous" collections
     const allCollections = collections.filter(c => c.name === 'All');
     const miscCollections = collections.filter(c => c.name === 'Miscellaneous');
-    
+
     // Clean up "All" duplicates
     if (allCollections.length > 1) {
       // Keep the first one, delete the rest
@@ -191,7 +189,7 @@ export function useCollections() {
         await db.deleteCollection(collection.id);
       }
     }
-    
+
     // Clean up "Miscellaneous" duplicates
     if (miscCollections.length > 1) {
       // Keep the first one, delete the rest
@@ -200,7 +198,7 @@ export function useCollections() {
         await db.deleteCollection(collection.id);
       }
     }
-    
+
     // Rename "All" to "Miscellaneous" if it exists
     if (allCollections.length > 0 && miscCollections.length === 0) {
       const allCollection = allCollections[0];
@@ -211,7 +209,7 @@ export function useCollections() {
         lastModifiedAt: Date.now(),
       });
     }
-    
+
     await loadCollections();
   };
 

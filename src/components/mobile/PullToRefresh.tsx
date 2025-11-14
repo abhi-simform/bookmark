@@ -8,11 +8,7 @@ interface PullToRefreshProps {
   threshold?: number;
 }
 
-export function PullToRefresh({
-  onRefresh,
-  children,
-  threshold = 80,
-}: PullToRefreshProps) {
+export function PullToRefresh({ onRefresh, children, threshold = 80 }: PullToRefreshProps) {
   const [pulling, setPulling] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [pullDistance, setPullDistance] = useState(0);
@@ -45,7 +41,7 @@ export function PullToRefresh({
     if (pullDistance >= threshold) {
       setRefreshing(true);
       hapticFeedback.medium();
-      
+
       try {
         await onRefresh();
       } finally {
@@ -66,7 +62,7 @@ export function PullToRefresh({
   return (
     <div
       ref={containerRef}
-      className="relative h-full overflow-y-auto overscroll-contain"
+      className="relative h-[calc(100dvh-130px)] overflow-y-auto overscroll-contain"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
@@ -90,8 +86,8 @@ export function PullToRefresh({
             {refreshing
               ? 'Refreshing...'
               : pullDistance >= threshold
-              ? 'Release to refresh'
-              : 'Pull to refresh'}
+                ? 'Release to refresh'
+                : 'Pull to refresh'}
           </span>
         </div>
       </div>

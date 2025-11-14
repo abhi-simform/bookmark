@@ -11,12 +11,7 @@ interface BottomSheetProps {
   initialSnap?: number;
 }
 
-export function BottomSheet({
-  isOpen,
-  onClose,
-  title,
-  children,
-}: BottomSheetProps) {
+export function BottomSheet({ isOpen, onClose, title, children }: BottomSheetProps) {
   const sheetRef = useRef<HTMLDivElement>(null);
   const startY = useRef<number>(0);
   const currentY = useRef<number>(0);
@@ -65,10 +60,7 @@ export function BottomSheet({
   return (
     <>
       {/* Backdrop */}
-      <div
-        className="fixed inset-0 bg-black/50 z-[60] animate-fade-in"
-        onClick={onClose}
-      />
+      <div className="fixed inset-0 bg-black/50 z-[60] animate-fade-in" onClick={onClose} />
 
       {/* Bottom Sheet */}
       <div
@@ -100,9 +92,7 @@ export function BottomSheet({
         )}
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto overscroll-contain pb-safe-bottom">
-          {children}
-        </div>
+        <div className="flex-1 overflow-y-auto overscroll-contain pb-safe-bottom">{children}</div>
       </div>
     </>
   );

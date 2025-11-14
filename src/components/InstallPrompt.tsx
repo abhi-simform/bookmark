@@ -12,9 +12,10 @@ export function InstallPrompt() {
 
   useEffect(() => {
     // Check if already installed
-    const isInstalled = window.matchMedia('(display-mode: standalone)').matches 
-      || (window.navigator as any).standalone 
-      || document.referrer.includes('android-app://');
+    const isInstalled =
+      window.matchMedia('(display-mode: standalone)').matches ||
+      (window.navigator as any).standalone ||
+      document.referrer.includes('android-app://');
 
     if (isInstalled) {
       return;
@@ -46,7 +47,7 @@ export function InstallPrompt() {
 
     await deferredPrompt.prompt();
     await deferredPrompt.userChoice;
-    
+
     setDeferredPrompt(null);
     setShowPrompt(false);
   };
@@ -61,7 +62,9 @@ export function InstallPrompt() {
   }
 
   // Detect device and browser for instructions
-  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+    navigator.userAgent
+  );
   const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
   const isAndroid = /Android/i.test(navigator.userAgent);
   const isSafari = /Safari/i.test(navigator.userAgent) && !/Chrome/i.test(navigator.userAgent);
@@ -70,19 +73,24 @@ export function InstallPrompt() {
   const isSamsung = /SamsungBrowser/i.test(navigator.userAgent);
 
   let instructions = '';
-  
+
   if (isIOS && isSafari) {
-    instructions = 'Tap the Share button (⎙) at the bottom, then tap "Add to Home Screen" to install this app!';
+    instructions =
+      'Tap the Share button (⎙) at the bottom, then tap "Add to Home Screen" to install this app!';
   } else if (isAndroid && isChrome) {
-    instructions = 'Tap the menu (⋮) at the top right, then tap "Add to Home screen" or "Install app" to install!';
+    instructions =
+      'Tap the menu (⋮) at the top right, then tap "Add to Home screen" or "Install app" to install!';
   } else if (isAndroid && isSamsung) {
-    instructions = 'Tap the menu (⋮) at the bottom, then tap "Add page to" and select "Home screen" to install!';
+    instructions =
+      'Tap the menu (⋮) at the bottom, then tap "Add page to" and select "Home screen" to install!';
   } else if (isAndroid && isFirefox) {
-    instructions = 'Tap the menu (⋮) at the top right, then tap "Install" to add this app to your home screen!';
+    instructions =
+      'Tap the menu (⋮) at the top right, then tap "Install" to add this app to your home screen!';
   } else if (isMobile) {
-    instructions = 'Open your browser menu and look for "Add to Home screen" or "Install" to install this app!';
+    instructions =
+      'Open your browser menu and look for "Add to Home screen" or "Install" to install this app!';
   } else {
-    instructions = 'Click the install icon in your browser\'s address bar to install this app!';
+    instructions = "Click the install icon in your browser's address bar to install this app!";
   }
 
   // Show the prompt with appropriate content
@@ -93,7 +101,7 @@ export function InstallPrompt() {
           <div className="flex-shrink-0 w-10 h-10 bg-indigo-100 dark:bg-indigo-900 rounded-lg flex items-center justify-center">
             <Download className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
           </div>
-          
+
           <div className="flex-1 min-w-0">
             <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-1">
               Install Bookmark Manager
@@ -103,7 +111,7 @@ export function InstallPrompt() {
                 <p className="text-xs text-gray-600 dark:text-gray-300 mb-3">
                   Install our app for quick access and offline use. Works on your home screen!
                 </p>
-                
+
                 <div className="flex gap-2">
                   <button
                     onClick={handleInstall}
@@ -121,10 +129,8 @@ export function InstallPrompt() {
               </>
             ) : (
               <>
-                <p className="text-xs text-gray-600 dark:text-gray-300 mb-3">
-                  {instructions}
-                </p>
-                
+                <p className="text-xs text-gray-600 dark:text-gray-300 mb-3">{instructions}</p>
+
                 <button
                   onClick={handleDismiss}
                   className="w-full px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-lg transition-colors"
@@ -134,7 +140,7 @@ export function InstallPrompt() {
               </>
             )}
           </div>
-        
+
           <button
             onClick={handleDismiss}
             className="flex-shrink-0 p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"

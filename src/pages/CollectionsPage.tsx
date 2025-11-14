@@ -7,13 +7,18 @@ import { BottomSheet } from '@/components/mobile/BottomSheet';
 import { ConfirmDialog } from '@/components/mobile/ConfirmDialog';
 import { useBottomSheet } from '@/hooks/useBottomSheet';
 import { hapticFeedback } from '@/lib/haptics';
-import { IconPicker, CollectionIconName, getCollectionIcon } from '@/components/collections/IconPicker';
+import {
+  IconPicker,
+  CollectionIconName,
+  getCollectionIcon,
+} from '@/components/collections/IconPicker';
 import { ColorPicker, getColorClass } from '@/components/collections/ColorPicker';
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function CollectionsPage() {
   const navigate = useNavigate();
-  const { collections, loading, deleteCollection, updateCollection, addCollection } = useCollections();
+  const { collections, loading, deleteCollection, updateCollection, addCollection } =
+    useCollections();
   const { bookmarks } = useBookmarks();
   const addCollectionSheet = useBottomSheet();
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
@@ -52,7 +57,7 @@ export default function CollectionsPage() {
     setActiveMenu(activeMenu === collectionId ? null : collectionId);
   };
 
-  const handleRename = (collection: typeof collections[0]) => {
+  const handleRename = (collection: (typeof collections)[0]) => {
     setEditingCollection({
       id: collection.id,
       name: collection.name,
@@ -65,7 +70,7 @@ export default function CollectionsPage() {
 
   const handleSaveRename = async () => {
     if (!editingCollection) return;
-    
+
     try {
       await updateCollection(editingCollection.id, {
         name: editingCollection.name.trim(),
@@ -81,7 +86,7 @@ export default function CollectionsPage() {
     }
   };
 
-  const handleDeleteClick = (collection: typeof collections[0]) => {
+  const handleDeleteClick = (collection: (typeof collections)[0]) => {
     const bookmarkCount = getBookmarkCount(collection.id);
     setDeleteConfirm({
       id: collection.id,
@@ -126,13 +131,14 @@ export default function CollectionsPage() {
 
   const { user } = useAuth();
 
-  const handleShareCollection = (e: React.MouseEvent, collection: typeof collections[0]) => {
+  const handleShareCollection = (e: React.MouseEvent, collection: (typeof collections)[0]) => {
     e.stopPropagation();
     setActiveMenu(null);
 
     // Filter bookmarks for this collection, excluding soft-deleted ones
-    const collectionBookmarks = bookmarks
-      .filter(b => b.collectionId === collection.id && !b.isDeleted);
+    const collectionBookmarks = bookmarks.filter(
+      b => b.collectionId === collection.id && !b.isDeleted
+    );
 
     const exportData = {
       version: '1.0.0',
@@ -149,14 +155,17 @@ export default function CollectionsPage() {
       stats: {
         totalBookmarks: collectionBookmarks.length,
         favoriteBookmarks: collectionBookmarks.filter(b => b.isFavorite).length,
-      }
+      },
     };
 
     const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    const fileName = collection.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    const fileName = collection.name
+      .toLowerCase()
+      .replace(/\s+/g, '-')
+      .replace(/[^a-z0-9-]/g, '');
     link.download = `collection-${fileName}-${new Date().toISOString().split('T')[0]}.json`;
     document.body.appendChild(link);
     link.click();
@@ -166,7 +175,7 @@ export default function CollectionsPage() {
   };
 
   return (
-    <div className="h-screen flex flex-col">
+    <>
       {/* Header */}
       <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 pt-safe-top sticky top-0 z-40">
         <div className="px-4 py-4">
@@ -186,7 +195,7 @@ export default function CollectionsPage() {
       </header>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto p-4">
+      <div className="h-[calc(100dvh-133px)] overflow-y-auto p-4">
         {loading ? (
           <div className="flex items-center justify-center py-12">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -196,20 +205,25 @@ export default function CollectionsPage() {
             <FolderOpen className="w-16 h-16 text-gray-400 mb-4" />
             <h3 className="text-lg font-semibold mb-2">No collections yet</h3>
             <p className="text-sm text-gray-500 text-center max-w-xs mb-4">
-              Create collections to organize your bookmarks. A default "All" collection will be created when you add your first bookmark.
+              Create collections to organize your bookmarks. A default "All" collection will be
+              created when you add your first bookmark.
             </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {collections.map((collection) => (
+            {collections.map(collection => (
               <div
                 key={collection.id}
                 className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow active:scale-95 cursor-pointer relative"
                 onClick={() => handleCollectionClick(collection.id)}
               >
-                <div className="flex items-start justify-between mb-3">
+                <div
+                  className={`flex items-start justify-between ${collection.description ? 'mb-3' : ''}`}
+                >
                   <div className="flex items-center gap-3 flex-1 min-w-0">
-                    <div className={`w-12 h-12 rounded-lg ${collection.color ? getColorClass(collection.color) : 'bg-indigo-500'} flex items-center justify-center text-white flex-shrink-0`}>
+                    <div
+                      className={`w-12 h-12 rounded-lg ${collection.color ? getColorClass(collection.color) : 'bg-indigo-500'} flex items-center justify-center text-white flex-shrink-0`}
+                    >
                       {(() => {
                         const Icon = getCollectionIcon(collection.icon);
                         return <Icon className="w-6 h-6" />;
@@ -218,15 +232,16 @@ export default function CollectionsPage() {
                     <div className="flex-1 min-w-0">
                       <h3 className="font-semibold text-base truncate">{collection.name}</h3>
                       <p className="text-sm text-gray-500 dark:text-gray-400 text-ellipsis line-clamp-1">
-                        {getBookmarkCount(collection.id)} {getBookmarkCount(collection.id) === 1 ? 'bookmark' : 'bookmarks'}
+                        {getBookmarkCount(collection.id)}{' '}
+                        {getBookmarkCount(collection.id) === 1 ? 'bookmark' : 'bookmarks'}
                       </p>
                     </div>
                   </div>
-                  
+
                   {/* Three-dot menu button */}
                   <div className="relative">
                     <button
-                      onClick={(e) => handleMenuClick(e, collection.id)}
+                      onClick={e => handleMenuClick(e, collection.id)}
                       className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
                       aria-label="Collection options"
                     >
@@ -238,21 +253,21 @@ export default function CollectionsPage() {
                       <>
                         <div
                           className="fixed inset-0 z-10"
-                          onClick={(e) => {
+                          onClick={e => {
                             e.stopPropagation();
                             setActiveMenu(null);
                           }}
                         />
                         <div className="absolute right-0 top-full mt-1 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-20 animate-scale-in">
                           <button
-                            onClick={(e) => handleShareCollection(e, collection)}
+                            onClick={e => handleShareCollection(e, collection)}
                             className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-left"
                           >
                             <Share2 className="w-4 h-4" />
                             <span>Share</span>
                           </button>
                           <button
-                            onClick={(e) => {
+                            onClick={e => {
                               e.stopPropagation();
                               handleRename(collection);
                             }}
@@ -262,7 +277,7 @@ export default function CollectionsPage() {
                             <span>Rename</span>
                           </button>
                           <button
-                            onClick={(e) => {
+                            onClick={e => {
                               e.stopPropagation();
                               handleDeleteClick(collection);
                             }}
@@ -303,9 +318,7 @@ export default function CollectionsPage() {
                 id="collection-name"
                 type="text"
                 value={editingCollection.name}
-                onChange={(e) =>
-                  setEditingCollection({ ...editingCollection, name: e.target.value })
-                }
+                onChange={e => setEditingCollection({ ...editingCollection, name: e.target.value })}
                 className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-base focus:ring-2 focus:ring-primary focus:border-transparent"
                 placeholder="Collection name"
                 autoFocus
@@ -318,7 +331,7 @@ export default function CollectionsPage() {
               <textarea
                 id="collection-description"
                 value={editingCollection.description}
-                onChange={(e) =>
+                onChange={e =>
                   setEditingCollection({ ...editingCollection, description: e.target.value })
                 }
                 className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-base focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
@@ -327,21 +340,17 @@ export default function CollectionsPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-2">
-                Icon
-              </label>
+              <label className="block text-sm font-medium mb-2">Icon</label>
               <IconPicker
                 selectedIcon={(editingCollection.icon || 'folder') as CollectionIconName}
-                onSelectIcon={(icon) => setEditingCollection({ ...editingCollection, icon })}
+                onSelectIcon={icon => setEditingCollection({ ...editingCollection, icon })}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-2">
-                Color
-              </label>
+              <label className="block text-sm font-medium mb-2">Color</label>
               <ColorPicker
                 selectedColor={editingCollection.color || '#6366f1'}
-                onColorSelect={(color) => setEditingCollection({ ...editingCollection, color })}
+                onColorSelect={color => setEditingCollection({ ...editingCollection, color })}
               />
             </div>
             <div className="flex gap-3">
@@ -381,9 +390,7 @@ export default function CollectionsPage() {
               id="new-collection-name"
               type="text"
               value={newCollection.name}
-              onChange={(e) =>
-                setNewCollection({ ...newCollection, name: e.target.value })
-              }
+              onChange={e => setNewCollection({ ...newCollection, name: e.target.value })}
               className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-base focus:ring-2 focus:ring-primary focus:border-transparent"
               placeholder="e.g., Food Recipes, Travel Plans"
               autoFocus
@@ -396,30 +403,24 @@ export default function CollectionsPage() {
             <textarea
               id="new-collection-description"
               value={newCollection.description}
-              onChange={(e) =>
-                setNewCollection({ ...newCollection, description: e.target.value })
-              }
+              onChange={e => setNewCollection({ ...newCollection, description: e.target.value })}
               className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-base focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
               placeholder="Optional description"
               rows={3}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-2">
-              Icon
-            </label>
+            <label className="block text-sm font-medium mb-2">Icon</label>
             <IconPicker
               selectedIcon={newCollection.icon}
-              onSelectIcon={(icon) => setNewCollection({ ...newCollection, icon })}
+              onSelectIcon={icon => setNewCollection({ ...newCollection, icon })}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-2">
-              Color
-            </label>
+            <label className="block text-sm font-medium mb-2">Color</label>
             <ColorPicker
               selectedColor={newCollection.color}
-              onColorSelect={(color) => setNewCollection({ ...newCollection, color })}
+              onColorSelect={color => setNewCollection({ ...newCollection, color })}
             />
           </div>
           <div className="flex gap-3">
@@ -460,6 +461,6 @@ export default function CollectionsPage() {
         cancelText="Cancel"
         variant="danger"
       />
-    </div>
+    </>
   );
 }

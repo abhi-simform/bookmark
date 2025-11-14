@@ -75,7 +75,7 @@ export default function AddBookmarkSheet({ onClose }: AddBookmarkSheetProps) {
         color: newCollection.color,
         order: collections.length,
       });
-      
+
       hapticFeedback.success();
       // Set the newly created collection as selected
       setCollectionId(createdCollection.id);
@@ -97,7 +97,7 @@ export default function AddBookmarkSheet({ onClose }: AddBookmarkSheetProps) {
 
     try {
       const metadata = await fetchMetadata(url.trim());
-      
+
       await addBookmark({
         url: url.trim(),
         title: title.trim(),
@@ -136,7 +136,7 @@ export default function AddBookmarkSheet({ onClose }: AddBookmarkSheetProps) {
             id="url"
             type="url"
             value={url}
-            onChange={(e) => setUrl(e.target.value)}
+            onChange={e => setUrl(e.target.value)}
             placeholder="https://example.com"
             className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-base focus:ring-2 focus:ring-primary focus:border-transparent"
             autoFocus
@@ -169,7 +169,7 @@ export default function AddBookmarkSheet({ onClose }: AddBookmarkSheetProps) {
           id="title"
           type="text"
           value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          onChange={e => setTitle(e.target.value)}
           placeholder="Bookmark title"
           className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-base focus:ring-2 focus:ring-primary focus:border-transparent"
           disabled={isLoading || isFetchingMetadata}
@@ -185,7 +185,7 @@ export default function AddBookmarkSheet({ onClose }: AddBookmarkSheetProps) {
         <textarea
           id="description"
           value={description}
-          onChange={(e) => setDescription(e.target.value)}
+          onChange={e => setDescription(e.target.value)}
           placeholder="Optional description"
           rows={3}
           className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-base focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
@@ -217,7 +217,7 @@ export default function AddBookmarkSheet({ onClose }: AddBookmarkSheetProps) {
             <select
               id="collection"
               value={collectionId}
-              onChange={(e) => {
+              onChange={e => {
                 const value = e.target.value;
                 if (value === 'ADD_NEW') {
                   setShowNewCollectionSheet(true);
@@ -230,7 +230,7 @@ export default function AddBookmarkSheet({ onClose }: AddBookmarkSheetProps) {
               required
             >
               <option value="">Select a collection</option>
-              {collections.map((collection) => (
+              {collections.map(collection => (
                 <option key={collection.id} value={collection.id}>
                   {collection.name}
                 </option>
@@ -278,7 +278,7 @@ export default function AddBookmarkSheet({ onClose }: AddBookmarkSheetProps) {
               id="new-collection-name"
               type="text"
               value={newCollection.name}
-              onChange={(e) => setNewCollection({ ...newCollection, name: e.target.value })}
+              onChange={e => setNewCollection({ ...newCollection, name: e.target.value })}
               className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-base focus:ring-2 focus:ring-primary focus:border-transparent"
               placeholder="Collection name"
               autoFocus
@@ -291,28 +291,24 @@ export default function AddBookmarkSheet({ onClose }: AddBookmarkSheetProps) {
             <textarea
               id="new-collection-description"
               value={newCollection.description}
-              onChange={(e) => setNewCollection({ ...newCollection, description: e.target.value })}
+              onChange={e => setNewCollection({ ...newCollection, description: e.target.value })}
               className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-base focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
               placeholder="Optional description"
               rows={3}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-2">
-              Icon
-            </label>
+            <label className="block text-sm font-medium mb-2">Icon</label>
             <IconPicker
               selectedIcon={newCollection.icon}
-              onSelectIcon={(icon) => setNewCollection({ ...newCollection, icon })}
+              onSelectIcon={icon => setNewCollection({ ...newCollection, icon })}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-2">
-              Color
-            </label>
+            <label className="block text-sm font-medium mb-2">Color</label>
             <ColorPicker
               selectedColor={newCollection.color}
-              onColorSelect={(color) => setNewCollection({ ...newCollection, color })}
+              onColorSelect={color => setNewCollection({ ...newCollection, color })}
             />
           </div>
           <div className="flex gap-3">

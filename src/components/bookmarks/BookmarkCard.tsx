@@ -26,7 +26,7 @@ export function BookmarkCard({
   isSelected,
 }: BookmarkCardProps) {
   const [showMenu, setShowMenu] = useState(false);
-  
+
   const longPressHandlers = useLongPress({
     onLongPress: () => onSelect?.(bookmark.id),
     onPress: () => window.open(bookmark.url, '_blank'),
@@ -49,7 +49,7 @@ export function BookmarkCard({
             alt={bookmark.title}
             className="w-full h-full object-cover"
             loading="lazy"
-            onError={(e) => {
+            onError={e => {
               // If thumbnail fails to load, hide it
               e.currentTarget.style.display = 'none';
             }}
@@ -71,7 +71,7 @@ export function BookmarkCard({
               alt=""
               className="w-4 h-4 rounded"
               loading="lazy"
-              onError={(e) => {
+              onError={e => {
                 // If favicon fails to load, use fallback
                 e.currentTarget.src = thumbnailService.getDefaultFavicon(bookmark.url);
               }}
@@ -90,9 +90,7 @@ export function BookmarkCard({
         </div>
 
         {/* Title */}
-        <h3 className="font-semibold text-base mb-2 line-clamp-2">
-          {bookmark.title}
-        </h3>
+        <h3 className="font-semibold text-base mb-2 line-clamp-2">{bookmark.title}</h3>
 
         {/* Description */}
         {bookmark.description && (
@@ -104,11 +102,8 @@ export function BookmarkCard({
         {/* Tags */}
         {bookmark.tags.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-3">
-            {bookmark.tags.slice(0, 3).map((tag) => (
-              <span
-                key={tag}
-                className="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full"
-              >
+            {bookmark.tags.slice(0, 3).map(tag => (
+              <span key={tag} className="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full">
                 #{tag}
               </span>
             ))}
@@ -128,7 +123,7 @@ export function BookmarkCard({
 
           <div className="flex items-center gap-2">
             <button
-              onClick={(e) => {
+              onClick={e => {
                 e.stopPropagation();
                 onToggleFavorite(bookmark.id);
               }}
@@ -140,14 +135,11 @@ export function BookmarkCard({
               )}
               aria-label={bookmark.isFavorite ? 'Remove from favorites' : 'Add to favorites'}
             >
-              <Star
-                className="w-5 h-5"
-                fill={bookmark.isFavorite ? 'currentColor' : 'none'}
-              />
+              <Star className="w-5 h-5" fill={bookmark.isFavorite ? 'currentColor' : 'none'} />
             </button>
 
             <button
-              onClick={(e) => {
+              onClick={e => {
                 e.stopPropagation();
                 window.open(bookmark.url, '_blank');
               }}
@@ -160,7 +152,7 @@ export function BookmarkCard({
             {/* Three-dot menu */}
             <div className="relative">
               <button
-                onClick={(e) => {
+                onClick={e => {
                   e.stopPropagation();
                   setShowMenu(!showMenu);
                 }}
@@ -175,7 +167,7 @@ export function BookmarkCard({
                 <>
                   <div
                     className="fixed inset-0 z-10"
-                    onClick={(e) => {
+                    onClick={e => {
                       e.stopPropagation();
                       setShowMenu(false);
                     }}
@@ -183,7 +175,7 @@ export function BookmarkCard({
                   <div className="absolute right-0 bottom-full mb-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-20 animate-scale-in">
                     {onEdit && (
                       <button
-                        onClick={(e) => {
+                        onClick={e => {
                           e.stopPropagation();
                           onEdit(bookmark);
                           setShowMenu(false);
@@ -196,7 +188,7 @@ export function BookmarkCard({
                     )}
                     {onMove && (
                       <button
-                        onClick={(e) => {
+                        onClick={e => {
                           e.stopPropagation();
                           onMove(bookmark);
                           setShowMenu(false);
@@ -208,7 +200,7 @@ export function BookmarkCard({
                       </button>
                     )}
                     <button
-                      onClick={(e) => {
+                      onClick={e => {
                         e.stopPropagation();
                         onDelete(bookmark.id);
                         setShowMenu(false);

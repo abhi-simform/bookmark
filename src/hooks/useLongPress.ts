@@ -6,9 +6,7 @@ interface UseLongPressOptions {
   delay?: number;
 }
 
-export function useLongPress(
-  { onLongPress, onPress, delay = 500 }: UseLongPressOptions
-) {
+export function useLongPress({ onLongPress, onPress, delay = 500 }: UseLongPressOptions) {
   const timeoutRef = useRef<NodeJS.Timeout>();
   const isLongPressRef = useRef(false);
 
