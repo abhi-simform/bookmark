@@ -36,13 +36,13 @@ export function BookmarkCard({
     <div
       {...longPressHandlers}
       className={cn(
-        'bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden transition-all',
+        'bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden transition-all flex',
         'active:scale-[0.98]',
         isSelected && 'ring-2 ring-primary'
       )}
     >
       {/* Thumbnail */}
-      <div className="w-full h-48 bg-gray-100 dark:bg-gray-900">
+      <div className="w-28 h-full flex-shrink-0 bg-gray-100 dark:bg-gray-900">
         {bookmark.thumbnail ? (
           <img
             src={bookmark.thumbnail}
@@ -62,7 +62,7 @@ export function BookmarkCard({
       </div>
 
       {/* Content */}
-      <div className="p-4">
+      <div className="p-2 ps-3">
         {/* Header with favicon and domain */}
         <div className="flex items-center gap-2 mb-2">
           {bookmark.favicon ? (
@@ -81,42 +81,23 @@ export function BookmarkCard({
               <Globe className="w-3 h-3 text-gray-600 dark:text-gray-400" />
             </div>
           )}
-          <span className="text-xs text-gray-500 dark:text-gray-400 truncate">
+          <span className="text-xs text-ellipsis line-clamp-1 text-gray-500 dark:text-gray-400 truncate">
             {getDomainFromUrl(bookmark.url)}
-          </span>
-          <span className="text-xs px-2 py-0.5 bg-gray-100 dark:bg-gray-700 rounded-full">
-            {bookmark.type}
           </span>
         </div>
 
         {/* Title */}
-        <h3 className="font-semibold text-base mb-2 line-clamp-2">{bookmark.title}</h3>
+        <h3 className="font-semibold text-sm mb-2 line-clamp-2">{bookmark.title}</h3>
 
         {/* Description */}
         {bookmark.description && (
-          <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-3">
+          <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2 mb-3">
             {bookmark.description}
           </p>
         )}
 
-        {/* Tags */}
-        {bookmark.tags.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-3">
-            {bookmark.tags.slice(0, 3).map(tag => (
-              <span key={tag} className="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full">
-                #{tag}
-              </span>
-            ))}
-            {bookmark.tags.length > 3 && (
-              <span className="text-xs px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded-full">
-                +{bookmark.tags.length - 3}
-              </span>
-            )}
-          </div>
-        )}
-
         {/* Footer */}
-        <div className="flex items-center justify-between pt-3 border-t border-gray-100 dark:border-gray-700">
+        <div className="flex items-center justify-between pt-1 border-t border-gray-100 dark:border-gray-700">
           <span className="text-xs text-gray-500 dark:text-gray-400">
             {formatDate(bookmark.createdAt)}
           </span>
@@ -128,14 +109,14 @@ export function BookmarkCard({
                 onToggleFavorite(bookmark.id);
               }}
               className={cn(
-                'p-2 rounded-full transition-colors touch-manipulation',
+                'p-1 rounded-full transition-colors touch-manipulation',
                 bookmark.isFavorite
                   ? 'text-yellow-500'
                   : 'text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
               )}
               aria-label={bookmark.isFavorite ? 'Remove from favorites' : 'Add to favorites'}
             >
-              <Star className="w-5 h-5" fill={bookmark.isFavorite ? 'currentColor' : 'none'} />
+              <Star className="w-4 h-4" fill={bookmark.isFavorite ? 'currentColor' : 'none'} />
             </button>
 
             <button
@@ -143,10 +124,10 @@ export function BookmarkCard({
                 e.stopPropagation();
                 window.open(bookmark.url, '_blank');
               }}
-              className="p-2 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors touch-manipulation"
+              className="p-1 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors touch-manipulation"
               aria-label="Open link"
             >
-              <ExternalLink className="w-5 h-5" />
+              <ExternalLink className="w-4 h-4" />
             </button>
 
             {/* Three-dot menu */}
@@ -156,10 +137,10 @@ export function BookmarkCard({
                   e.stopPropagation();
                   setShowMenu(!showMenu);
                 }}
-                className="p-2 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors touch-manipulation"
+                className="p-1 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors touch-manipulation"
                 aria-label="More options"
               >
-                <MoreVertical className="w-5 h-5" />
+                <MoreVertical className="w-4 h-4" />
               </button>
 
               {/* Dropdown Menu */}
