@@ -345,65 +345,9 @@ export class SyncService {
   }
 
   // Initial sync when user logs in (cloud -> local)
-  // Ensure Miscellaneous collection exists for user
-  async ensureMiscellaneousCollection(userId: string): Promise<void> {
-    // Check if Miscellaneous collection exists in cloud
-    const { data: cloudCollections, error: cloudError } = await supabase
-      .from('collections')
-      .select('*')
-      .eq('user_id', userId)
-      .eq('name', 'Miscellaneous')
-      .maybeSingle();
-
-    if (!cloudCollections) {
-      // Create Miscellaneous collection in cloud
-      const miscId = `misc_${userId}`;
-      const now = new Date().toISOString();
-      
-      const { error: insertError } = await supabase.from('collections').insert({
-        id: miscId,
-        user_id: userId,
-        name: 'Miscellaneous',
-        description: 'Default collection for uncategorized bookmarks',
-        color: '#6366f1',
-        icon: 'folder',
-        order: 0,
-        created_at: now,
-        last_modified_at: now,
-      });
-
-      if (insertError) {
-        console.error('[ensureMiscellaneous] Error creating in cloud:', insertError);
-      }
-    }
-
-    // Ensure it exists locally
-    const localCollections = await db.getAllCollections();
-    const hasMisc = localCollections.some(c => c.name === 'Miscellaneous');
-
-    if (!hasMisc) {
-      const miscId = `misc_${userId}`;
-      const now = Date.now();
-      
-      await db.addCollection({
-        id: miscId,
-        name: 'Miscellaneous',
-        description: 'Default collection for uncategorized bookmarks',
-        color: '#6366f1',
-        icon: 'folder',
-        order: 0,
-        createdAt: now,
-        lastModifiedAt: now,
-      });
-    }
-  }
-
   async initialSync(userId: string): Promise<void> {
     try {
       this.syncStatus.isSyncing = true;
-
-      // Ensure Miscellaneous collection exists first
-      await this.ensureMiscellaneousCollection(userId);
 
       // First, get everything from cloud
       await this.syncCollectionsFromCloud(userId);

@@ -8,6 +8,7 @@ import { BottomSheet } from '@/components/mobile/BottomSheet';
 import { useBottomSheet } from '@/hooks/useBottomSheet';
 import { syncService } from '@/lib/sync';
 import { useInstallPrompt } from '@/hooks/useInstallPrompt';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 export default function ProfilePage() {
   const { user, signOut } = useAuth();
@@ -339,6 +340,12 @@ export default function ProfilePage() {
               </span>
             </div>
           )}
+
+          {/* Theme Toggle Section */}
+          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+            <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Appearance</h3>
+            <ThemeToggle />
+          </div>
 
           <button
             onClick={handleImport}
